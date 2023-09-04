@@ -1,2 +1,3 @@
 # diary-board
-프론트엔드, 백엔드를 분리하여 API로 개발한 프로젝트
+**diary-board 팀 프로젝트의 프론트엔드 레포지토리 입니다.** <br/><br/>
+[백엔드 레포지토리](https://github.com/happyhun/diary-board)
