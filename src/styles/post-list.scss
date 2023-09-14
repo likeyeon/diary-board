@@ -1,0 +1,43 @@
+@use "./util";
+
+.post-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: util.rem(28px);
+}
+
+.post-list-item {
+  border-radius: 14px;
+  border: 1px solid #d6d3d1;
+  max-width: util.rem(256px);
+
+  &__img {
+    width: util.rem(256px);
+    height: util.rem(172px);
+    object-fit: cover;
+    border-radius: 14px 14px 0 0;
+  }
+
+  &__updated {
+    padding-bottom: util.rem(6px);
+  }
+
+  &__title {
+    font-weight: bold;
+  }
+
+  &__content {
+    padding-top: util.rem(6px);
+  }
+
+  &__top {
+    padding: util.rem(14px);
+  }
+
+  &__bottom {
+    display: flex;
+    justify-content: space-between;
+    padding: util.rem(14px);
+    border-top: 1px solid #d6d3d1;
+  }
+}
