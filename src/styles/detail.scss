@@ -1,0 +1,24 @@
+@use "./util";
+
+.post-detail {
+  &__top {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: util.rem(33px);
+    gap: util.rem(8px);
+  }
+  &__title {
+    font-size: util.rem(32px);
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  &__img {
+    width: util.rem(448px);
+  }
+
+  &__bottom {
+    display: flex;
+    gap: util.rem(30px);
+  }
+}
