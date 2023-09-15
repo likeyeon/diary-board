@@ -3,8 +3,14 @@
    License: none (public domain)
 */
 
+@use "colors";
+
 html,
-body,
+body {
+  font-family: "Noto Sans KR", sans-serif;
+  color: colors.$stone_900;
+  width: 100vw;
+}
 div,
 span,
 applet,
