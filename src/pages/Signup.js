@@ -2,8 +2,12 @@ import "../styles/member.scss";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { Link } from "react-router-dom";
+import { AuthSignup } from "../apis/AuthApi";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
+  const navigate = useNavigate();
+
   const {
     register,
     formState: { errors },
@@ -11,7 +15,11 @@ const Signup = () => {
   } = useForm({
     validateCriteriaMode: "all",
   });
-  const onSubmit = (data) => console.log(data);
+
+  const onSubmit = async (data) => {
+    await AuthSignup(data);
+    navigate("/members/login");
+  };
 
   const emailRules = register("email", {
     required: "Email ID를 입력해주세요",
