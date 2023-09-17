@@ -1,3 +1,8 @@
 @use "util";
 
 $fontFamily: "Inter", sans-serif;
+
+@mixin titleFont {
+  font-size: util.rem(32px);
+  font-weight: 700;
+}
