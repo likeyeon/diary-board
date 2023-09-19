@@ -45,7 +45,12 @@ const Login = () => {
         <h1 className="title">로그인</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="form">
           <div className="inputField">
-            <input {...emailRules} type="email" placeholder="이메일" />
+            <input
+              {...emailRules}
+              type="email"
+              placeholder="이메일"
+              className="members_input"
+            />
             <h6 className="message">
               <ErrorMessage errors={errors} name="email">
                 {({ message }) => <p>{message}</p>}
@@ -55,6 +60,7 @@ const Login = () => {
 
           <div className="inputField">
             <input
+              className="members_input"
               type="password"
               placeholder="비밀번호"
               autoComplete="off"

@@ -18,7 +18,7 @@ const Signup = () => {
 
   const onSubmit = async (data) => {
     await AuthSignup(data);
-    navigate("/members/login");
+    navigate("/login");
   };
 
   const emailRules = register("email", {
@@ -61,7 +61,12 @@ const Signup = () => {
         <h1 className="title">회원가입</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="form">
           <div className="inputField">
-            <input {...emailRules} type="email" placeholder="이메일" />
+            <input
+              {...emailRules}
+              type="email"
+              placeholder="이메일"
+              className="members_input"
+            />
             <h6 className="message">
               <ErrorMessage errors={errors} name="email">
                 {({ message }) => <p>{message}</p>}
@@ -70,7 +75,12 @@ const Signup = () => {
           </div>
 
           <div className="inputField">
-            <input {...nicknameRules} type="text" placeholder="닉네임" />
+            <input
+              {...nicknameRules}
+              type="text"
+              placeholder="닉네임"
+              className="members_input"
+            />
             <h6 className="message">
               <ErrorMessage errors={errors} name="nickname">
                 {({ messages }) => {
@@ -87,6 +97,7 @@ const Signup = () => {
 
           <div className="inputField">
             <input
+              className="members_input"
               type="password"
               placeholder="비밀번호"
               autoComplete="off"
@@ -108,6 +119,7 @@ const Signup = () => {
 
           <div className="inputField">
             <input
+              className="members_input"
               type="password"
               placeholder="비밀번호 확인"
               autoComplete="off"
@@ -123,7 +135,7 @@ const Signup = () => {
             회원가입
           </button>
           <div className="form-link">
-            <Link to="/members/login" className="form-link">
+            <Link to="/login" className="form-link">
               로그인하러 가기
             </Link>
           </div>
