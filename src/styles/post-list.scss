@@ -1,4 +1,9 @@
-@use "./util";
+@use "util";
+
+.post-list-wrapper {
+  margin-top: util.rem(29px);
+  margin-bottom: util.rem(58px);
+}
 
 .post-list {
   display: flex;
