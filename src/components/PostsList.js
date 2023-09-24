@@ -9,7 +9,6 @@ const PostsList = () => {
   const getPostsList = async () => {
     const res = await axios.get("http://localhost:8080/posts");
     setPostsList(res.data);
-    console.log(res.data);
     return res.data;
   };
 

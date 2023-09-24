@@ -23,6 +23,7 @@ const Detail = () => {
       id={post.id}
       title={post.title}
       content={post.content}
+      created_at={post.created_at}
       updated_at={post.updated_at}
       member_id={post.member_id}
     />
