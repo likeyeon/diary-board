@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import chevronLeft from "../assets/chevron-left.svg";
+import "../styles/post-form.scss";
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -47,23 +48,43 @@ const CreatePost = () => {
   }, [getCurrentTime, getValues, setValue, navigate]);
 
   return (
-    <div className="createForm-wrapper">
-      <div className="previous">
-        <img className="previous-icon" src={chevronLeft} alt="chevron-left" />
-        <Link to={"/posts"} className="previous-text">
+    <div className="postForm-wrapper">
+      <div className="postForm-previous">
+        <img
+          className="postForm-previous__icon"
+          src={chevronLeft}
+          alt="chevron-left"
+        />
+        <Link to={"/posts"} className="postForm-previous__text">
           돌아가기
         </Link>
       </div>
-      <div className="createForm-wrapper">
+      <div className="postForm-form-wrapper">
         <form
           method="post"
-          className="createForm"
+          className="postForm-form"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <input type="text" {...register("title", { required: true })} />
-          <textarea {...register("content", { required: true })} />
-          <input type="file" id="chooseImg" name="chooseImg" accept="image/*" />
-          <button type="submit" className="submitButton">
+          <input
+            type="text"
+            {...register("title", { required: true })}
+            className="postForm-form__title"
+          />
+          <div className="postForm-form__contents">
+            <textarea
+              className="postForm-form__textarea"
+              {...register("content", { required: true })}
+            />
+            <div className="postForm-form__imageFile">
+              <input
+                type="file"
+                id="chooseImg"
+                name="chooseImg"
+                accept="image/*"
+              />
+            </div>
+          </div>
+          <button type="submit" className="postForm-form__btn">
             작성완료
           </button>
         </form>
