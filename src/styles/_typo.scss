@@ -5,4 +5,11 @@ $fontFamily: "Inter", sans-serif;
 @mixin titleFont {
   font-size: util.rem(32px);
   font-weight: 700;
+  font-style: normal;
+}
+
+@mixin contentFont {
+  font-size: util.rem(20px);
+  line-height: 163.023%;
+  font-style: normal;
 }

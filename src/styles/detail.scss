@@ -1,24 +1,73 @@
-@use "./util";
+@use "util";
+@use "colors";
+@use "typo";
 
-.post-detail {
-  &__top {
+.postDetail {
+  &-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: util.rem(39px);
+
+    &__previous {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: util.rem(8px);
+
+      &--text {
+        font-size: util.rem(20px);
+      }
+    }
+
+    &__btn {
+      display: flex;
+      gap: util.rem(27px);
+      button {
+        border: 0;
+        background-color: transparent;
+        font-size: util.rem(20px);
+        cursor: pointer;
+      }
+    }
+  }
+
+  &-contents {
     display: flex;
     flex-direction: column;
     padding-bottom: util.rem(33px);
     gap: util.rem(8px);
-  }
-  &__title {
-    font-size: util.rem(32px);
-    font-style: normal;
-    font-weight: 700;
-  }
 
-  &__img {
-    width: util.rem(448px);
-  }
+    &__top {
+      display: flex;
+      flex-direction: column;
+      gap: util.rem(8px);
+      padding-bottom: util.rem(30px);
+    }
 
-  &__bottom {
-    display: flex;
-    gap: util.rem(30px);
+    &__title {
+      @include typo.titleFont;
+    }
+
+    &__info {
+      font-size: util.rem(18px);
+      color: colors.$stone_500;
+      display: flex;
+      gap: util.rem(15px);
+      align-items: center;
+    }
+
+    &__img {
+      width: util.rem(448px);
+    }
+
+    &__bottom {
+      display: flex;
+      gap: util.rem(30px);
+    }
+
+    &__content {
+      @include typo.contentFont;
+    }
   }
 }

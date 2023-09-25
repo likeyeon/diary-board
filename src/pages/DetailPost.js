@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import PostDetail from "../components/PostDetail";
 
-const Detail = () => {
+const DetailPost = () => {
   const { id } = useParams();
   const [post, setPost] = useState({});
 
@@ -30,4 +30,4 @@ const Detail = () => {
   );
 };
 
-export default Detail;
+export default DetailPost;
