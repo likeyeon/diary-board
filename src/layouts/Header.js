@@ -32,7 +32,7 @@ const Header = () => {
 
           <div className="header__menu">
             <Link to="/posts">게시판</Link>
-            <Link to="/">글쓰기</Link>
+            <Link to="/create">글쓰기</Link>
           </div>
         </div>
         <div
