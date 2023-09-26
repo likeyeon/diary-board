@@ -17,8 +17,7 @@ const Signup = () => {
   });
 
   const onSubmit = async (data) => {
-    await AuthSignup(data);
-    navigate("/login");
+    await AuthSignup(data, navigate);
   };
 
   const emailRules = register("email", {
