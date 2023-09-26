@@ -4,9 +4,13 @@ import { ErrorMessage } from "@hookform/error-message";
 import { Link } from "react-router-dom";
 import { AuthLogin } from "../apis/AuthApi";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useCookies } from "react-cookie";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [cookies, setCookie, removeCookie] = useCookies(["refreshToken"]);
 
   const {
     register,
@@ -17,10 +21,7 @@ const Login = () => {
   });
 
   const onSubmit = async (data) => {
-    const result = await AuthLogin(data);
-    const accessToken = result.accessToken;
-    localStorage.setItem("access", accessToken);
-    navigate("/posts");
+    await AuthLogin(data, dispatch, setCookie);
   };
 
   const emailRules = register("email", {
@@ -87,7 +88,7 @@ const Login = () => {
             <Link to="/" className="form-link">
               비밀번호를 잊어버리셨나요?
             </Link>
-            <Link to="/members" className="form-link">
+            <Link to="/signup" className="form-link">
               아직 회원이 아니신가요?
             </Link>
           </div>
