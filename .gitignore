@@ -7,6 +7,12 @@
 .AppleDouble
 .LSOverride
 
+#env
+.env
+.env.local
+.env.production
+.env.development
+
 # Icon must end with two \r
 Icon
 

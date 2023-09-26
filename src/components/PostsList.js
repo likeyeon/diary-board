@@ -7,7 +7,9 @@ const PostsList = () => {
   const [postsList, setPostsList] = useState([]);
 
   const getPostsList = async () => {
-    const res = await axios.get("http://localhost:8080/posts");
+    const res = await axios.get(
+      `https://cors-anywhere.herokuapp.com/${process.env.REACT_APP_API_URL}/posts`
+    );
     setPostsList(res.data);
     return res.data;
   };
