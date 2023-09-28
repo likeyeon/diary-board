@@ -2,7 +2,7 @@ import "../styles/member.scss";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { Link } from "react-router-dom";
-import { AuthSignup } from "../apis/AuthApi";
+import { AuthSignup } from "../utils/AuthApi";
 import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
@@ -57,7 +57,7 @@ const Signup = () => {
   return (
     <div className="form-wrapper">
       <div className="form-wrapperInner">
-        <h1 className="title">회원가입</h1>
+        <h1 className="form__title">회원가입</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="form">
           <div className="inputField">
             <input
