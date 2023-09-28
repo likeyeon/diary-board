@@ -8,6 +8,12 @@ $fontFamily: "Inter", sans-serif;
   font-style: normal;
 }
 
+@mixin titleMiddleFont {
+  font-size: util.rem(20px);
+  font-weight: 700;
+  font-style: normal;
+}
+
 @mixin contentFont {
   font-size: util.rem(20px);
   line-height: 163.023%;
