@@ -1,21 +1,43 @@
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { isAuth } from "../utils/AuthApi";
+import { useEffect, useState } from "react";
 
 const Profile = () => {
+  const accessToken = useSelector((state) => state.Auth.accessToken);
+
+  const [loading, setLoading] = useState(true);
+
   const {
     register,
+    reset,
     formState: { errors },
     handleSubmit,
   } = useForm({
     validateCriteriaMode: "all",
   });
 
+  useEffect(() => {
+    const fetchNickname = async () => {
+      const defaultNickname = await isAuth(accessToken);
+      // defaultNickname 값이 존재할 때만 실행
+      if (defaultNickname) {
+        reset({
+          nickname: defaultNickname,
+        });
+        setLoading(false);
+      }
+    };
+    fetchNickname();
+  }, []);
+
   const onSubmit = async (data) => {
     // await AuthLogin(data, dispatch, setCookie);
   };
 
-  const newNicknameRules = register("newNickname", {
+  const nicknameRules = register("nickname", {
     required: "닉네임을 입력해주세요",
     minLength: {
       value: 2,
@@ -53,112 +75,113 @@ const Profile = () => {
       );
     },
   });
-
-  return (
-    <div className="form-wrapper">
-      <div className="form-wrapperInner">
-        <div className="form__title--group">
-          <h1 className="form__title">프로필 설정</h1>
-        </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="form">
-          <div className="form-block">
-            <h3 className="form__title--middle">닉네임</h3>
-            <div className="inputField">
-              <input
-                {...newNicknameRules}
-                type="text"
-                placeholder="닉네임"
-                className="members_input"
-              />
-              <h6 className="message">
-                <ErrorMessage errors={errors} name="newNickname">
-                  {({ messages }) => {
-                    return (
-                      messages &&
-                      Object.entries(messages).map(([type, message]) => (
-                        <p key={type}>{message}</p>
-                      ))
-                    );
-                  }}
-                </ErrorMessage>
-              </h6>
-            </div>
+  if (loading) return <div>Loading...</div>;
+  else
+    return (
+      <div className="form-wrapper">
+        <div className="form-wrapperInner">
+          <div className="form__title--group">
+            <h1 className="form__title">프로필 설정</h1>
           </div>
-
-          <div className="form-block">
-            <h3 className="form__title--middle">비밀번호</h3>
-            <div className="inputField">
-              <input
-                className="members_input"
-                type="password"
-                placeholder="현재 비밀번호"
-                autoComplete="off"
-                {...confirmNowPasswordRules}
-              />
-              <h6 className="message">
-                <ErrorMessage errors={errors} name="nowPassword_confirm">
-                  {({ message }) => <p>{message}</p>}
-                </ErrorMessage>
-              </h6>
+          <form onSubmit={handleSubmit(onSubmit)} className="form">
+            <div className="form-block">
+              <h3 className="form__title--middle">닉네임</h3>
+              <div className="inputField">
+                <input
+                  {...nicknameRules}
+                  type="text"
+                  placeholder="닉네임"
+                  className="members_input"
+                />
+                <h6 className="message">
+                  <ErrorMessage errors={errors} name="nickname">
+                    {({ messages }) => {
+                      return (
+                        messages &&
+                        Object.entries(messages).map(([type, message]) => (
+                          <p key={type}>{message}</p>
+                        ))
+                      );
+                    }}
+                  </ErrorMessage>
+                </h6>
+              </div>
             </div>
 
-            <div className="inputField">
-              <input
-                className="members_input"
-                type="password"
-                placeholder="새 비밀번호"
-                autoComplete="off"
-                {...newPasswordRules}
-              />
-              <h6 className="message">
-                <ErrorMessage errors={errors} name="newPassword">
-                  {({ messages }) => {
-                    return (
-                      messages &&
-                      Object.entries(messages).map(([type, message]) => (
-                        <p key={type}>{message}</p>
-                      ))
-                    );
-                  }}
-                </ErrorMessage>
-              </h6>
+            <div className="form-block">
+              <h3 className="form__title--middle">비밀번호</h3>
+              <div className="inputField">
+                <input
+                  className="members_input"
+                  type="password"
+                  placeholder="현재 비밀번호"
+                  autoComplete="off"
+                  {...confirmNowPasswordRules}
+                />
+                <h6 className="message">
+                  <ErrorMessage errors={errors} name="nowPassword_confirm">
+                    {({ message }) => <p>{message}</p>}
+                  </ErrorMessage>
+                </h6>
+              </div>
+
+              <div className="inputField">
+                <input
+                  className="members_input"
+                  type="password"
+                  placeholder="새 비밀번호"
+                  autoComplete="off"
+                  {...newPasswordRules}
+                />
+                <h6 className="message">
+                  <ErrorMessage errors={errors} name="newPassword">
+                    {({ messages }) => {
+                      return (
+                        messages &&
+                        Object.entries(messages).map(([type, message]) => (
+                          <p key={type}>{message}</p>
+                        ))
+                      );
+                    }}
+                  </ErrorMessage>
+                </h6>
+              </div>
+
+              <div className="inputField">
+                <input
+                  className="members_input"
+                  type="password"
+                  placeholder="새 비밀번호 확인"
+                  autoComplete="off"
+                  {...confirmNewPasswordRules}
+                />
+                <h6 className="message">
+                  <ErrorMessage errors={errors} name="newPassword_confirm">
+                    {({ message }) => <p>{message}</p>}
+                  </ErrorMessage>
+                </h6>
+              </div>
             </div>
 
-            <div className="inputField">
-              <input
-                className="members_input"
-                type="password"
-                placeholder="새 비밀번호 확인"
-                autoComplete="off"
-                {...confirmNewPasswordRules}
-              />
-              <h6 className="message">
-                <ErrorMessage errors={errors} name="newPassword_confirm">
-                  {({ message }) => <p>{message}</p>}
-                </ErrorMessage>
-              </h6>
+            <button type="submit" className="form-button">
+              저장하기
+            </button>
+          </form>
+
+          <div className="form-block account-management">
+            <h3 className="form__title--middle">계정관리</h3>
+            <div className="account-management__link">
+              <Link to="#" className="account-management__link__item--logout">
+                로그아웃
+              </Link>
+              <Link to="#" className="account-management__link__item--delete">
+                회원탈퇴
+              </Link>
             </div>
-          </div>
-
-          <button type="submit" className="form-button">
-            저장하기
-          </button>
-        </form>
-
-        <div className="form-block account-management">
-          <h3 className="form__title--middle">계정관리</h3>
-          <div className="account-management__link">
-            <Link to="#" className="account-management__link__item--logout">
-              로그아웃
-            </Link>
-            <Link to="#" className="account-management__link__item--delete">
-              회원탈퇴
-            </Link>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
 };
 
 export default Profile;

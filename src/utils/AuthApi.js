@@ -1,6 +1,7 @@
 import axios from "axios";
 import { setToken } from "../redux/AuthReducer";
 
+/* 회원가입 */
 export const AuthSignup = async (data, navigate) => {
   await axios
     .post(
@@ -28,6 +29,7 @@ export const AuthSignup = async (data, navigate) => {
     });
 };
 
+/* 로그인 */
 export const AuthLogin = async (data, dispatch, setCookie) => {
   await axios
     .post(
@@ -42,7 +44,6 @@ export const AuthLogin = async (data, dispatch, setCookie) => {
           path: "/",
         });
         console.log(response);
-
         alert("로그인 성공!");
       }
     })
@@ -54,4 +55,23 @@ export const AuthLogin = async (data, dispatch, setCookie) => {
         console.log(error);
       }
     });
+};
+
+/* 회원 정보 조회 */
+export const isAuth = async (accessToken) => {
+  try {
+    const response = await axios.get(
+      `https://cors-anywhere.herokuapp.com/${process.env.REACT_APP_API_URL}/members`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    if (response.status === 200) {
+      return response.data.nickname;
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
