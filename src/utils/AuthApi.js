@@ -101,3 +101,20 @@ export const logoutAuth = (dispatch, removeCookie, navigate) => {
   alert("로그아웃 되었습니다.");
   navigate("/login");
 };
+
+/* 회원탈퇴 */
+export const deleteAuth = async (accessToken, navigate) => {
+  try {
+    const response = await axios.delete("/members", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    if (response.status === 200) {
+      alert(response.data.message);
+      navigate("/posts");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};

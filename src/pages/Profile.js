@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { useSelector } from "react-redux";
-import { updateAuth, isAuth, logoutAuth } from "../utils/AuthApi";
+import { updateAuth, isAuth, logoutAuth, deleteAuth } from "../utils/AuthApi";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -43,8 +43,12 @@ const Profile = () => {
     await updateAuth(accessToken, data);
   };
 
-  const logout = () => {
+  const logoutMember = () => {
     logoutAuth(dispatch, removeCookie, navigate);
+  };
+
+  const deleteMember = async () => {
+    deleteAuth(accessToken, navigate);
   };
 
   const nicknameRules = register("nickname", {
@@ -113,20 +117,6 @@ const Profile = () => {
 
             <div className="form-block">
               <h3 className="form__title--middle">비밀번호</h3>
-              {/* <div className="inputField">
-                <input
-                  className="members_input"
-                  type="password"
-                  placeholder="현재 비밀번호"
-                  autoComplete="off"
-                  {...confirmNowPasswordRules}
-                />
-                <h6 className="message">
-                  <ErrorMessage errors={errors} name="nowPassword_confirm">
-                    {({ message }) => <p>{message}</p>}
-                  </ErrorMessage>
-                </h6>
-              </div> */}
 
               <div className="inputField">
                 <input
@@ -176,11 +166,14 @@ const Profile = () => {
             <div className="account-management__buttons">
               <button
                 className="account-management__buttons__item--logout"
-                onClick={logout}
+                onClick={logoutMember}
               >
                 로그아웃
               </button>
-              <button className="account-management__buttons__item--delete">
+              <button
+                className="account-management__buttons__item--delete"
+                onClick={deleteMember}
+              >
                 회원탈퇴
               </button>
             </div>
