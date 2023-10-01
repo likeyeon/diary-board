@@ -23,36 +23,40 @@
   font-style: normal;
   font-weight: 700;
 
-  &__toggleBtn {
+  &-toggleBtn {
     display: none;
   }
 
-  &__link {
+  &-link {
     display: flex;
-  }
 
-  &__menu {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-left: util.rem(40px);
-
-    a {
-      padding: util.rem(4px);
-    }
-
-    :nth-child(2) {
+    &-menu {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
       margin-left: util.rem(40px);
-    }
 
-    &--mobile,
-    &--mobile--active {
-      display: none;
+      a {
+        padding: util.rem(4px);
+      }
+
+      :nth-child(2) {
+        margin-left: util.rem(40px);
+      }
+
+      &--mobile,
+      &--mobile--active {
+        display: none;
+      }
     }
   }
 
-  &__profile {
+  &-profile {
     position: relative;
+
+    &__img {
+      cursor: pointer;
+    }
 
     &--modal {
       display: none;
@@ -89,8 +93,8 @@
     padding: util.rem(20px);
   }
 
-  .header__menu--mobile,
-  .header__menu--mobile--active {
+  .header-link-menu--mobile,
+  .header-link-menu--mobile--active {
     display: none;
   }
 }
@@ -104,31 +108,33 @@
     display: flex;
     justify-content: space-between;
 
-    &__toggleBtn {
+    &-toggleBtn {
       display: block;
     }
 
-    &__menu {
-      display: none;
+    &-link {
+      &-menu {
+        display: none;
 
-      &--mobile--active {
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        padding: util.rem(16px) 0;
-        gap: util.rem(16px);
-        border-bottom: 1px solid colors.$stone_100;
-        width: 100%;
-        background-color: colors.$white;
-        box-shadow: 0px 2px 6px 0px rgba(28, 25, 23, 0.1);
+        &--mobile--active {
+          display: flex;
+          flex-direction: column;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          padding: util.rem(16px) 0;
+          gap: util.rem(16px);
+          border-bottom: 1px solid colors.$stone_100;
+          width: 100%;
+          background-color: colors.$white;
+          box-shadow: 0px 2px 6px 0px rgba(28, 25, 23, 0.1);
 
-        a {
-          padding: util.rem(16px) util.rem(20px);
+          a {
+            padding: util.rem(16px) util.rem(20px);
 
-          &:hover {
-            background-color: colors.$stone_100;
+            &:hover {
+              background-color: colors.$stone_100;
+            }
           }
         }
       }

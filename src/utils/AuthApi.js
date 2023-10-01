@@ -1,16 +1,14 @@
 import axios from "axios";
 import { setToken } from "../redux/AuthReducer";
 
+/* 회원가입 */
 export const AuthSignup = async (data, navigate) => {
   await axios
-    .post(
-      `https://cors-anywhere.herokuapp.com/${process.env.REACT_APP_API_URL}/members`,
-      {
-        email: data.email,
-        password: data.password,
-        nickname: data.nickname,
-      }
-    )
+    .post(`/members`, {
+      email: data.email,
+      password: data.password,
+      nickname: data.nickname,
+    })
     // 회원가입 성공
     .then(function (response) {
       if (response.status === 200) {
@@ -22,18 +20,17 @@ export const AuthSignup = async (data, navigate) => {
     .catch(function (error) {
       if (error.response.status === 400 || error.response.status === 409) {
         alert(error.response.data.message);
+        console.log(error);
       } else {
         console.log(error);
       }
     });
 };
 
+/* 로그인 */
 export const AuthLogin = async (data, dispatch, setCookie) => {
   await axios
-    .post(
-      `https://cors-anywhere.herokuapp.com/${process.env.REACT_APP_API_URL}/members/login`,
-      data
-    )
+    .post("/members/login", data)
     // 로그인 성공
     .then(function (response) {
       if (response.status === 200) {
@@ -42,7 +39,6 @@ export const AuthLogin = async (data, dispatch, setCookie) => {
           path: "/",
         });
         console.log(response);
-
         alert("로그인 성공!");
       }
     })
@@ -50,8 +46,48 @@ export const AuthLogin = async (data, dispatch, setCookie) => {
     .catch(function (error) {
       if (error.response.status === 400 || error.response.status === 401) {
         alert(error.response.data.message);
+        console.log(error);
       } else {
         console.log(error);
       }
     });
+};
+
+/* 회원 정보 조회 */
+export const isAuth = async (accessToken) => {
+  try {
+    const response = await axios.get("/members", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    if (response.status === 200) {
+      return response.data.nickname;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/* 회원 정보 변경 */
+export const updateAuth = async (accessToken, data) => {
+  try {
+    const response = await axios.patch(
+      "/members",
+      {
+        nickname: data.nickname,
+        password: data.newPassword,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    if (response.status === 200) {
+      alert(response.data.message);
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
