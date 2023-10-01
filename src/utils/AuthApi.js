@@ -103,12 +103,15 @@ export const logoutAuth = (dispatch, removeCookie, navigate) => {
 };
 
 /* 회원탈퇴 */
-export const deleteAuth = async (accessToken, navigate) => {
+export const deleteAuth = async (accessToken, removeCookie, navigate) => {
   try {
     const response = await axios.delete("/members", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
+    });
+    removeCookie("refreshToken", {
+      path: "/",
     });
     if (response.status === 200) {
       alert(response.data.message);

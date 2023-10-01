@@ -48,7 +48,7 @@ const Profile = () => {
   };
 
   const deleteMember = async () => {
-    deleteAuth(accessToken, navigate);
+    deleteAuth(accessToken, removeCookie, navigate);
   };
 
   const nicknameRules = register("nickname", {
