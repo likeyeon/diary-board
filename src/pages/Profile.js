@@ -1,14 +1,20 @@
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
-import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { updateAuth, isAuth } from "../utils/AuthApi";
+import { updateAuth, isAuth, logoutAuth } from "../utils/AuthApi";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useCookies } from "react-cookie";
 
 const Profile = () => {
   const accessToken = useSelector((state) => state.Auth.accessToken);
 
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [, , removeCookie] = useCookies(["refreshToken"]);
 
   const {
     register,
@@ -35,6 +41,10 @@ const Profile = () => {
 
   const onSubmit = async (data) => {
     await updateAuth(accessToken, data);
+  };
+
+  const logout = () => {
+    logoutAuth(dispatch, removeCookie, navigate);
   };
 
   const nicknameRules = register("nickname", {
@@ -163,13 +173,16 @@ const Profile = () => {
 
           <div className="form-block account-management">
             <h3 className="form__title--middle">계정관리</h3>
-            <div className="account-management__link">
-              <Link to="#" className="account-management__link__item--logout">
+            <div className="account-management__buttons">
+              <button
+                className="account-management__buttons__item--logout"
+                onClick={logout}
+              >
                 로그아웃
-              </Link>
-              <Link to="#" className="account-management__link__item--delete">
+              </button>
+              <button className="account-management__buttons__item--delete">
                 회원탈퇴
-              </Link>
+              </button>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setToken } from "../redux/AuthReducer";
+import { setToken, removeToken } from "../redux/AuthReducer";
 
 /* 회원가입 */
 export const AuthSignup = async (data, navigate) => {
@@ -90,4 +90,14 @@ export const updateAuth = async (accessToken, data) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+/* 로그아웃 */
+export const logoutAuth = (dispatch, removeCookie, navigate) => {
+  dispatch(removeToken());
+  removeCookie("refreshToken", {
+    path: "/",
+  });
+  alert("로그아웃 되었습니다.");
+  navigate("/login");
 };
