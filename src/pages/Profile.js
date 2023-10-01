@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { isAuth } from "../utils/AuthApi";
+import { updateAuth, isAuth } from "../utils/AuthApi";
 import { useEffect, useState } from "react";
 
 const Profile = () => {
@@ -34,7 +34,7 @@ const Profile = () => {
   }, []);
 
   const onSubmit = async (data) => {
-    // await AuthLogin(data, dispatch, setCookie);
+    await updateAuth(accessToken, data);
   };
 
   const nicknameRules = register("nickname", {
@@ -47,13 +47,6 @@ const Profile = () => {
       value: 8,
       message: "닉네임은 최대 8글자 이하이어야 합니다.",
     },
-  });
-
-  /* 현재 유저의 토큰과 비교하여 테스트 */
-  const confirmNowPasswordRules = register("nowPassword_confirm", {
-    // validate: (value, formValues) => {
-    //   return value === formValues.newassword || "현재 비밀번호가 일치하지 않습니다.";
-    // },
   });
 
   const newPasswordRules = register("newPassword", {
@@ -110,7 +103,7 @@ const Profile = () => {
 
             <div className="form-block">
               <h3 className="form__title--middle">비밀번호</h3>
-              <div className="inputField">
+              {/* <div className="inputField">
                 <input
                   className="members_input"
                   type="password"
@@ -123,7 +116,7 @@ const Profile = () => {
                     {({ message }) => <p>{message}</p>}
                   </ErrorMessage>
                 </h6>
-              </div>
+              </div> */}
 
               <div className="inputField">
                 <input
