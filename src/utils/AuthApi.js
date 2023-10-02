@@ -28,7 +28,7 @@ export const AuthSignup = async (data, navigate) => {
 };
 
 /* 로그인 */
-export const AuthLogin = async (data, dispatch, setCookie) => {
+export const AuthLogin = async (data, dispatch, setCookie, state, navigate) => {
   await axios
     .post("/members/login", data)
     // 로그인 성공
@@ -40,6 +40,8 @@ export const AuthLogin = async (data, dispatch, setCookie) => {
         });
         console.log(response);
         alert("로그인 성공!");
+
+        state ? navigate(state) : navigate("/posts");
       }
     })
     // 로그인 실패
