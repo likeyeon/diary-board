@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { Link } from "react-router-dom";
 import { AuthLogin } from "../utils/AuthApi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
 
@@ -11,6 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [cookies, setCookie, removeCookie] = useCookies(["refreshToken"]);
+  const { state } = useLocation();
 
   const {
     register,
@@ -21,7 +22,7 @@ const Login = () => {
   });
 
   const onSubmit = async (data) => {
-    await AuthLogin(data, dispatch, setCookie);
+    await AuthLogin(data, dispatch, setCookie, state, navigate);
   };
 
   const emailRules = register("email", {

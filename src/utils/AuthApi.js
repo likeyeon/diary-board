@@ -1,5 +1,7 @@
 import axios from "axios";
 import { setToken, removeToken } from "../redux/AuthReducer";
+import api from "../utils/api";
+import store from "../redux/store";
 
 /* 회원가입 */
 export const AuthSignup = async (data, navigate) => {
@@ -28,7 +30,7 @@ export const AuthSignup = async (data, navigate) => {
 };
 
 /* 로그인 */
-export const AuthLogin = async (data, dispatch, setCookie) => {
+export const AuthLogin = async (data, dispatch, setCookie, state, navigate) => {
   await axios
     .post("/members/login", data)
     // 로그인 성공
@@ -40,6 +42,8 @@ export const AuthLogin = async (data, dispatch, setCookie) => {
         });
         console.log(response);
         alert("로그인 성공!");
+
+        state ? navigate(state) : navigate("/posts");
       }
     })
     // 로그인 실패
@@ -54,13 +58,9 @@ export const AuthLogin = async (data, dispatch, setCookie) => {
 };
 
 /* 회원 정보 조회 */
-export const isAuth = async (accessToken) => {
+export const isAuth = async () => {
   try {
-    const response = await axios.get("/members", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await api.get("/members");
     if (response.status === 200) {
       return response.data.nickname;
     }
@@ -93,8 +93,8 @@ export const updateAuth = async (accessToken, data) => {
 };
 
 /* 로그아웃 */
-export const logoutAuth = (dispatch, removeCookie, navigate) => {
-  dispatch(removeToken());
+export const logoutAuth = (removeCookie, navigate) => {
+  store.dispatch(removeToken());
   removeCookie("refreshToken", {
     path: "/",
   });

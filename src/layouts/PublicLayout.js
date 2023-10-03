@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import "../styles/layout.scss";
 import Header from "./Header";
 
-const Layout = () => {
+const PublicLayout = () => {
   return (
     <>
       <Header />
@@ -13,4 +13,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default PublicLayout;
