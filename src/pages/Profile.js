@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
-
 const Profile = () => {
   const accessToken = useSelector((state) => state.Auth.accessToken);
 
@@ -27,7 +26,7 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchNickname = async () => {
-      const defaultNickname = await isAuth(accessToken);
+      const defaultNickname = (await isAuth(accessToken)) ?? "";
       // defaultNickname 값이 존재할 때만 실행
       if (defaultNickname) {
         reset({
