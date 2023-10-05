@@ -1,6 +1,20 @@
 @use "util";
+@use "colors";
 
-@mixin smallBtn($color) {
+@mixin smallSubmitBtn() {
+  display: block;
+  background: colors.$stone_600;
+  color: white;
+  font-weight: 500;
+  font-size: util.rem(20px);
+  text-align: center;
+  padding: util.rem(10px) util.rem(43px);
+  border-radius: util.rem(10px);
+  border: none;
+  cursor: pointer;
+}
+
+@mixin tinyBtn($color) {
   font-size: util.rem(18px);
   font-weight: 500;
   font-style: normal;
@@ -12,4 +26,5 @@
   align-items: center;
   border-radius: util.rem(5px);
   border: 1px solid $color;
+  cursor: pointer;
 }

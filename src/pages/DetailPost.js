@@ -8,10 +8,19 @@ const DetailPost = () => {
   const [post, setPost] = useState({});
 
   const getPost = async () => {
-    const res = await axios.get(`http://localhost:8080/posts/${id}`);
-    setPost(res.data);
-    console.log(post);
-    return res.data;
+    try {
+      const response = await axios.get(`${id}`);
+      if (response.status === 200) {
+        setPost(response.data);
+      }
+    } catch (error) {
+      if (error.response.status === 400) {
+        alert(error.response.data.message);
+        console.log(error);
+      } else {
+        console.log(error);
+      }
+    }
   };
 
   useEffect(() => {
@@ -25,7 +34,7 @@ const DetailPost = () => {
       content={post.content}
       created_at={post.created_at}
       updated_at={post.updated_at}
-      member_id={post.member_id}
+      author={post.author}
     />
   );
 };

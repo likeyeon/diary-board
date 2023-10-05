@@ -1,6 +1,7 @@
 @use "util";
 @use "colors";
 @use "typo";
+@use "button";
 
 .postDetail {
   &-link {
@@ -68,6 +69,63 @@
 
     &__content {
       @include typo.contentFont;
+    }
+  }
+
+  .modal {
+    &-box {
+      opacity: 0;
+    }
+    &-box--show {
+      transition: opacity 0.3s ease;
+      opacity: 1;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(28, 25, 23, 0.4);
+      z-index: 1;
+    }
+
+    &-wrapper {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      background-color: white;
+      transform: translate(-50%, -50%);
+      border-radius: util.rem(15px);
+      width: util.rem(448px);
+    }
+
+    &-content {
+      padding: util.rem(32px);
+    }
+
+    &__title {
+      @include typo.titleFont;
+      font-size: util.rem(26px);
+    }
+
+    &__subText {
+      @include typo.contentFont;
+      padding: util.rem(15px) 0 util.rem(56px) 0;
+    }
+
+    &__button {
+      display: flex;
+      gap: util.rem(10px);
+      justify-content: flex-end;
+
+      &--cancel {
+        @include button.smallSubmitBtn;
+        background-color: white;
+        color: colors.$stone_600;
+      }
+
+      &--confirm {
+        @include button.smallSubmitBtn;
+      }
     }
   }
 }

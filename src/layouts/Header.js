@@ -41,7 +41,7 @@ const Header = () => {
 
           <div className="header-link-menu">
             <Link to="/posts">게시판</Link>
-            <Link to="/create">글쓰기</Link>
+            <Link to="/posts/create">글쓰기</Link>
           </div>
         </div>
         <div
@@ -50,7 +50,7 @@ const Header = () => {
           }
         >
           <Link to="/posts">게시판</Link>
-          <Link to="/create">글쓰기</Link>
+          <Link to="/posts/create">글쓰기</Link>
         </div>
         <div className="header-profile">
           {isLoggedIn ? (

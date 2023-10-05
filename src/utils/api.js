@@ -32,7 +32,6 @@ instance.interceptors.request.use(
     const accessToken = getAccessToken();
     if (accessToken && isAuth(accessToken)) {
       config.headers.Authorization = `Bearer ${accessToken}`;
-      console.log(accessToken);
     }
     return config;
   },
