@@ -40,7 +40,6 @@ export const AuthLogin = async (data, dispatch, setCookie, state, navigate) => {
         setCookie("refreshToken", response.data.refresh_token, {
           path: "/",
         });
-        console.log(response);
         alert("로그인 성공!");
 
         state ? navigate(state) : navigate("/posts");
@@ -93,8 +92,8 @@ export const updateAuth = async (accessToken, data) => {
 };
 
 /* 로그아웃 */
-export const logoutAuth = (removeCookie, navigate) => {
-  store.dispatch(removeToken());
+export const logoutAuth = (dispatch, removeCookie, navigate) => {
+  dispatch({ type: "REMOVE_TOKEN" });
   removeCookie("refreshToken", {
     path: "/",
   });
