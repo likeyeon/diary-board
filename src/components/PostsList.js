@@ -7,9 +7,25 @@ const PostsList = () => {
   const [postsList, setPostsList] = useState([]);
 
   const getPostsList = async () => {
-    const res = await axios.get(`/posts`);
-    setPostsList(res.data);
-    return res.data;
+    const response = await axios.get(`/posts`);
+    setPostsList(response.data.content);
+    return response.data;
+  };
+
+  /* 시간 형식 변환 */
+  const formatDate = (dateString) => {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      weekday: "short",
+    };
+    const date = new Date(dateString);
+
+    let formatted = date.toLocaleDateString("ko-KR", options);
+    formatted = formatted.replace(/\. \(/g, " (");
+
+    return formatted;
   };
 
   useEffect(() => {
@@ -22,7 +38,7 @@ const PostsList = () => {
         <>
           <ul className="post-list">
             {postsList.map((post) => (
-              <div key={post.id}>
+              <div className="post-list-item-wrapper" key={post.id}>
                 <Link to={`/posts/${post.id}`}>
                   <li
                     className="post-list-item"
@@ -36,7 +52,9 @@ const PostsList = () => {
 
                     <div className="post-list-item__top">
                       <div className="post-list-item__updated">
-                        {post.updated_at}
+                        {formatDate(
+                          post.modifed_at ? post.modified_at : post.created_at
+                        )}
                       </div>
                       <div className="post-list-item__text">
                         <div
@@ -52,7 +70,7 @@ const PostsList = () => {
                     </div>
                     <div className="post-list-item__bottom">
                       <span className="post-list-item__member">
-                        {post.member_id}
+                        {post.author}
                       </span>
                       <span className="post-list-item__likes">🖤 2</span>
                     </div>

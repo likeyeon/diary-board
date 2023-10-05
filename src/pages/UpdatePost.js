@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import chevronLeft from "../assets/chevron-left.svg";
 import axios from "axios";
+import api from "../utils/api";
 
 const UpdatePost = () => {
   const navigate = useNavigate();
@@ -10,31 +11,18 @@ const UpdatePost = () => {
 
   const { register, setValue, getValues, handleSubmit } = useForm({
     defaultValues: {
-      id: 0,
+      author: "",
       title: "",
-      content: "",
       created_at: "",
-      updated_at: "",
-      member_id: "",
+      id: 0,
+      modified_at: "",
+      content: "",
     },
   });
 
-  const getCurrentTime = useCallback(() => {
-    const days = ["일", "월", "화", "수", "목", "금", "토"];
-    const currentTime = new Date();
-    const currentYear = currentTime.getFullYear();
-    const currentMonth = String(currentTime.getMonth() + 1).padStart(2, "0");
-    const currentDate = String(currentTime.getDate()).padStart(2, "0");
-    const currentDay = days[currentTime.getDay()];
-    const currentHour = String(currentTime.getHours()).padStart(2, "0");
-    const currentMinute = currentTime.getMinutes();
-
-    return `${currentYear}-${currentMonth}-${currentDate}(${currentDay}) ${currentHour}:${currentMinute}`;
-  }, []);
-
   const getPost = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/posts/${id}`);
+      const response = await api.get(`/posts/${id}`);
       const data = { ...response.data };
       for (const key in data) {
         setValue(key, data[key]);
@@ -48,19 +36,20 @@ const UpdatePost = () => {
     getPost();
   }, []);
 
-  const onSubmit = useCallback(async () => {
-    try {
-      setValue("updated_at", getCurrentTime());
-      const response = await axios.patch(
-        `http://localhost:8080/posts/${id}`,
-        getValues()
-      );
-      console.log(response);
-      navigate(`/posts/${id}`);
-    } catch (error) {
-      console.log(error);
-    }
-  }, [getValues, id, getCurrentTime, navigate, setValue]);
+  const onSubmit = useCallback(
+    async (data) => {
+      try {
+        await api.patch(`posts/${id}`, {
+          title: data.title,
+          content: data.content,
+        });
+        navigate(`/posts/${id}`);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [id, navigate]
+  );
 
   return (
     <div className="createForm-wrapper">

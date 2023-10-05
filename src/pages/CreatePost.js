@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useCallback } from "react";
+import api from "../utils/api";
 import { Link, useNavigate } from "react-router-dom";
 import chevronLeft from "../assets/chevron-left.svg";
 import "../styles/post-form.scss";
@@ -8,44 +9,24 @@ import "../styles/post-form.scss";
 const CreatePost = () => {
   const navigate = useNavigate();
 
-  const { register, setValue, getValues, handleSubmit } = useForm({
+  const { register, getValues, handleSubmit } = useForm({
     defaultValues: {
       title: "",
       content: "",
-      created_at: "",
-      updated_at: "",
-      member_id: "",
     },
   });
 
-  const getCurrentTime = useCallback(() => {
-    const days = ["일", "월", "화", "수", "목", "금", "토"];
-    const currentTime = new Date();
-    const currentYear = currentTime.getFullYear();
-    const currentMonth = String(currentTime.getMonth() + 1).padStart(2, "0");
-    const currentDate = String(currentTime.getDate()).padStart(2, "0");
-    const currentDay = days[currentTime.getDay()];
-    const currentHour = String(currentTime.getHours()).padStart(2, "0");
-    const currentMinute = currentTime.getMinutes();
-
-    return `${currentYear}-${currentMonth}-${currentDate}(${currentDay}) ${currentHour}:${currentMinute}`;
-  }, []);
-
   const onSubmit = useCallback(async () => {
     try {
-      setValue("updated_at", getCurrentTime());
-      setValue("created_at", getCurrentTime());
-      setValue("member_id", Math.floor(Math.random() * 10)); //임시 랜덤번호 설정
-      const response = await axios.post(
-        "http://localhost:8080/posts",
-        getValues()
-      );
+      await api.post("/posts", getValues());
+      alert("등록이 완료되었습니다.");
       navigate("/posts");
-      console.log(response);
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      if (error.response.status === 400) {
+        alert(error.response.data.message);
+      } else console.log(error);
     }
-  }, [getCurrentTime, getValues, setValue, navigate]);
+  }, [getValues, navigate]);
 
   return (
     <div className="postForm-wrapper">
