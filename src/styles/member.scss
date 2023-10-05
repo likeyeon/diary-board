@@ -100,11 +100,11 @@
 
     &__item {
       &--logout {
-        @include button.smallBtn(colors.$stone_900);
+        @include button.tinyBtn(colors.$stone_900);
       }
 
       &--delete {
-        @include button.smallBtn(colors.$red);
+        @include button.tinyBtn(colors.$red);
       }
     }
   }
