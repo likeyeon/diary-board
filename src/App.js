@@ -16,13 +16,13 @@ const App = () => {
       <Route path="/" element={<PublicLayout />}>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/posts" element={<Posts />} />
+        <Route path="/posts/:id" element={<DetailPost />} />
       </Route>
       <Route path="/" element={<AuthLayout />}>
-        <Route path="/posts/:id" element={<DetailPost />} />
-        <Route path="/create" element={<CreatePost />} />
-        <Route path="/update/:id" element={<UpdatePost />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/posts/create" element={<CreatePost />} />
+        <Route path="/posts/update/:id" element={<UpdatePost />} />
       </Route>
     </Routes>
   );
