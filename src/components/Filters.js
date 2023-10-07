@@ -1,6 +1,15 @@
 import "../styles/post-filter.scss";
+import { useState } from "react";
 
-const Filters = () => {
+const Filters = ({ onOrder }) => {
+  const [orderOption, setOrderOption] = useState("asc");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setOrderOption(e.target.value);
+    onOrder(orderOption);
+  };
+
   return (
     <div className="posts-filter">
       <div className="filter-left">
@@ -37,12 +46,16 @@ const Filters = () => {
           </label>
         </div>
         <div className="filter-order">
-          <form action="#" className="filter-order__form">
-            <select name="order" id="order" className="filter-order__select">
-              <option value="latest">최신순</option>
-              <option value="popular">공감순</option>
-            </select>
-          </form>
+          <select
+            name="order"
+            value={orderOption}
+            onChange={(e) => handleSubmit(e)}
+            id="order"
+            className="filter-order__select"
+          >
+            <option value="asc">최신순</option>
+            <option value="desc">공감순</option>
+          </select>
         </div>
       </div>
     </div>
