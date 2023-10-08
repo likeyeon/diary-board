@@ -12,7 +12,7 @@ const Posts = () => {
   const [statePage, setPage] = useState(0);
   const [stateSearchText, setSearchText] = useState("");
   const [stateSearchOption, setSearchOption] = useState("all");
-  const [stateOrderOption, setOrderOption] = useState("asc");
+  const [stateOrderOption, setOrderOption] = useState("desc");
   const size = 8; //페이지 당 게시글 개수
 
   /* 게시글 목록 받기 */
