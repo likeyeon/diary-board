@@ -45,10 +45,7 @@ const PostsList = ({ postsList }) => {
                           )}
                         </div>
                         <div className="post-list-item__text">
-                          <div
-                            to={`/posts/${post.id}`}
-                            className="post-list-item__title"
-                          >
+                          <div className="post-list-item__title">
                             {post.title}
                           </div>
                           <p className="post-list-item__content">
