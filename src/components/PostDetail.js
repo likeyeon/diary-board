@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import chevronLeft from "../assets/chevron-left.svg";
 import verticalLine from "../assets/verticalLine.svg";
 import { isAuth } from "../utils/AuthApi";
+import store from "../redux/store";
 
 const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
   const navigate = useNavigate();
@@ -59,15 +60,19 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
   const [isAuthor, setIsAuthor] = useState(false);
 
   useEffect(() => {
+    // 사용자의 닉네임과 게시글 작성자의 닉네임이 같은지 비교
+    // access tokn이 있으면 isAuth 함수를 호출하여 사용자의 닉네임을 변수에 저장한다.
     const fetchNickname = async () => {
-      const myNickname = (await isAuth(accessToken)) ?? "";
+      const myNickname = store.getState().Auth.accessToken
+        ? await isAuth(accessToken)
+        : "";
       if (myNickname === author) {
         setIsAuthor(true);
       }
       setLoading(false);
     };
     fetchNickname();
-  }, [accessToken, author]);
+  }, [accessToken]);
 
   if (loading) return <div>loading...</div>;
   else
