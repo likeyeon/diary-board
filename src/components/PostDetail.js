@@ -72,7 +72,7 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
       setLoading(false);
     };
     fetchNickname();
-  }, [accessToken]);
+  }, [accessToken, author, isAuthor]);
 
   if (loading) return <div>loading...</div>;
   else
