@@ -1,5 +1,5 @@
 import axios from "axios";
-import { isAuth } from "./jwtUtils";
+import { isLogin } from "./jwtUtils";
 import { setToken } from "../redux/AuthReducer";
 import store from "../redux/store";
 import { logoutAuth } from "../utils/AuthApi";
@@ -30,7 +30,7 @@ const reissueAccessToken = async (refreshToken) => {
 instance.interceptors.request.use(
   (config) => {
     const accessToken = getAccessToken();
-    if (accessToken && isAuth(accessToken)) {
+    if (accessToken && isLogin(accessToken)) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
