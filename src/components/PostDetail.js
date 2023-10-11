@@ -6,12 +6,31 @@ import api from "../utils/api";
 import { useSelector } from "react-redux";
 import chevronLeft from "../assets/chevron-left.svg";
 import verticalLine from "../assets/verticalLine.svg";
+import heart from "../assets/heart.svg";
+import heartFill from "../assets/heart-fill.svg";
 import { isAuth } from "../utils/AuthApi";
+import { isLogin } from "../utils/jwtUtils";
 import store from "../redux/store";
 
-const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
+const PostDetail = ({
+  id,
+  title,
+  content,
+  created_at,
+  updated_at,
+  author,
+  heart_count,
+}) => {
   const navigate = useNavigate();
 
+  const accessToken = useSelector((state) => state.Auth.accessToken);
+
+  const [loading, setLoading] = useState(true);
+  const [isAuthor, setIsAuthor] = useState(false);
+  const [heartCount, setHeartCount] = useState(heart_count);
+  const [isLiked, setIsLiked] = useState(false);
+
+  /* 게시글 수정 함수 */
   const moveToUpdate = () => {
     navigate(`/posts/update/${id}`);
   };
@@ -44,7 +63,7 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
   const deletePost = useCallback(async () => {
     setShow();
     try {
-      await api.delete(`posts/${id}`);
+      await api.delete(`/posts/${id}`);
       alert("게시글이 삭제되었습니다");
       navigate("/posts");
     } catch (error) {
@@ -54,10 +73,44 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
     }
   }, [id, navigate, setShow]);
 
-  const accessToken = useSelector((state) => state.Auth.accessToken);
+  /* 하트 수 함수 */
+  const handleHeartCount = useCallback(
+    (operation) => {
+      setHeartCount(heartCount + operation);
+      setIsLiked(true);
+    },
+    [heartCount]
+  );
 
-  const [loading, setLoading] = useState(true);
-  const [isAuthor, setIsAuthor] = useState(false);
+  /* 좋아요 post */
+  const likePost = useCallback(async () => {
+    try {
+      if (!isLogin(accessToken)) {
+        alert("로그인이 필요한 기능입니다");
+      } else {
+        await api.post("/hearts", {
+          id: id,
+          heart_type: "post",
+        });
+        handleHeartCount(+1);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [id, accessToken, handleHeartCount]);
+
+  /* 좋아요 delete */
+  const deleteLikePost = useCallback(async () => {
+    try {
+      await api.delete("/hearts", {
+        id: id,
+        heart_type: "post",
+      });
+      handleHeartCount(-1);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [id, handleHeartCount]);
 
   useEffect(() => {
     // 사용자의 닉네임과 게시글 작성자의 닉네임이 같은지 비교
@@ -72,7 +125,8 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
       setLoading(false);
     };
     fetchNickname();
-  }, [accessToken, author, isAuthor]);
+    setHeartCount(heart_count);
+  }, [accessToken, author, isAuthor, heart_count]);
 
   if (loading) return <div>loading...</div>;
   else
@@ -110,18 +164,49 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
         </div>
         <div className="postDetail-contents">
           <div className="postDetail-contents__top">
-            <h1 className="postDetail-contents__title">{title}</h1>
-            <div className="postDetail-contents__info">
-              <span className="postDetail-contents__info--updated">
-                {formatDate(updated_at ? updated_at : created_at)}
-              </span>
-              <span>
-                <img src={verticalLine} alt="vertical-line" />
-              </span>
-              <span className="postDetail-contents__info--memeber">
-                {author}
-              </span>
+            <div className="postDetail-contents__top__left">
+              <h1 className="postDetail-contents__title">{title}</h1>
+              <div className="postDetail-contents__info">
+                <span className="postDetail-contents__info--updated">
+                  {formatDate(updated_at ? updated_at : created_at)}
+                </span>
+                <span>
+                  <img src={verticalLine} alt="vertical-line" />
+                </span>
+                <span className="postDetail-contents__info--memeber">
+                  {author}
+                </span>
+              </div>
             </div>
+            {isLiked ? (
+              <div
+                className="postDetail-contents__top__like"
+                onClick={deleteLikePost}
+              >
+                <img
+                  className="postDetail-contents__like__img"
+                  src={heartFill}
+                  alt="like-fill"
+                />
+                <span className="postDetail-contents__like__count">
+                  {heartCount}
+                </span>
+              </div>
+            ) : (
+              <div
+                className="postDetail-contents__top__like"
+                onClick={likePost}
+              >
+                <img
+                  className="postDetail-contents__like__img"
+                  src={heart}
+                  alt="like"
+                />
+                <span className="postDetail-contents__like__count">
+                  {heartCount}
+                </span>
+              </div>
+            )}
           </div>
           <div className="postDetail-contents__bottom">
             <img

@@ -4,6 +4,7 @@ import CommentItem from "./CommentItem";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { isAuth } from "../utils/AuthApi";
+import "../styles/comments.scss";
 
 const Comment = ({ id, commentList }) => {
   const [comments, setComments] = useState([]);
@@ -85,27 +86,31 @@ const Comment = ({ id, commentList }) => {
   return (
     <div className="comments-wrapper">
       <div className="comments-header">
+        <div className="comments-header__title">
+          댓글 {comments && comments.length}
+        </div>
         {accessToken ? (
           <>
             <textarea
-              className="comments-header-textarea"
-              placeholder="댓글을 입력해주세요"
+              className="comments-header__textarea"
+              placeholder="댓글을 작성해주세요."
+              maxLength="500"
               onChange={(e) => {
                 setContent(e.target.value);
               }}
               value={content}
             ></textarea>
-            <button className="comments-header-button" onClick={submit}>
+            <button className="comments-header__button" onClick={submit}>
               등록하기
             </button>
           </>
         ) : (
           <>
-            <textarea className="comments-header-textarea" readOnly />
-            <p>
-              작성하려면 <Link to={"/login"}>로그인</Link>이 필요합니다
-            </p>
-            <button className="comments-header-button" disabled>
+            <textarea className="comments-header__textarea" readOnly />
+            <span className="comments-header__textarea__notice">
+              작성하려면 <Link to={"/login"}>로그인</Link>이 필요합니다.
+            </span>
+            <button className="comments-header__button" disabled>
               등록하기
             </button>
           </>
@@ -123,6 +128,7 @@ const Comment = ({ id, commentList }) => {
               userNickname={userNickname}
               updateComment={updateComment}
               deleteComment={deleteComment}
+              heart_count={comment.heart_count}
             />
           ))}
       </div>
