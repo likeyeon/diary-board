@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import PostDetail from "../components/PostDetail";
 import Comments from "../components/Comments";
-import api from "../utils/api";
 import { useSelector } from "react-redux";
 
 const DetailPost = () => {
@@ -20,7 +19,6 @@ const DetailPost = () => {
       if (response.status === 200) {
         setPost(response.data);
       }
-      console.log(response);
     } catch (error) {
       if (error.response.status === 400) {
         alert(error.response.data.message);
@@ -45,6 +43,7 @@ const DetailPost = () => {
         updated_at={post.updated_at}
         author={post.author}
         heart_count={post.heart_count}
+        is_hearted={post.is_hearted}
       />
       <Comments id={post.id} commentList={post.comments} />
     </>

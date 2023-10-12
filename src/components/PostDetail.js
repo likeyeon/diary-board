@@ -20,6 +20,7 @@ const PostDetail = ({
   updated_at,
   author,
   heart_count,
+  is_hearted,
 }) => {
   const navigate = useNavigate();
 
@@ -77,9 +78,9 @@ const PostDetail = ({
   const handleHeartCount = useCallback(
     (operation) => {
       setHeartCount(heartCount + operation);
-      setIsLiked(true);
+      setIsLiked(!isLiked);
     },
-    [heartCount]
+    [heartCount, isLiked]
   );
 
   /* 좋아요 post */
@@ -103,8 +104,10 @@ const PostDetail = ({
   const deleteLikePost = useCallback(async () => {
     try {
       await api.delete("/hearts", {
-        id: id,
-        heart_type: "post",
+        data: {
+          id: id,
+          heart_type: "post",
+        },
       });
       handleHeartCount(-1);
     } catch (error) {
@@ -126,7 +129,8 @@ const PostDetail = ({
     };
     fetchNickname();
     setHeartCount(heart_count);
-  }, [accessToken, author, isAuthor, heart_count]);
+    setIsLiked(is_hearted);
+  }, [accessToken, author, isAuthor, heart_count, is_hearted]);
 
   if (loading) return <div>loading...</div>;
   else

@@ -16,6 +16,7 @@ const CommentItem = ({
   updateComment,
   deleteComment,
   heart_count,
+  is_hearted,
 }) => {
   const [modal, setModal] = useState(false);
   const [modify, setModify] = useState(false);
@@ -30,7 +31,8 @@ const CommentItem = ({
     // 댓글 작성자와 로그인한 사용자의 닉네임이 같은지 비교
     if (userNickname === author) setIsAuthor(true);
     setHeartCount(heart_count);
-  }, [userNickname, author, heart_count]);
+    setIsLiked(is_hearted);
+  }, [userNickname, author, heart_count, is_hearted]);
 
   const handleSubmit = (e) => {
     updateComment(comment_id, newContent);
@@ -46,9 +48,9 @@ const CommentItem = ({
   const handleHeartCount = useCallback(
     (operation) => {
       setHeartCount(heartCount + operation);
-      setIsLiked(true);
+      setIsLiked(!isLiked);
     },
-    [heartCount]
+    [heartCount, isLiked]
   );
 
   /* 댓글 좋아요 post */
@@ -67,6 +69,21 @@ const CommentItem = ({
       console.log(error);
     }
   }, [comment_id, accessToken, handleHeartCount]);
+
+  /* 댓글 좋아요 delete */
+  const deleteLikeComment = useCallback(async () => {
+    try {
+      await api.delete("/hearts", {
+        data: {
+          id: comment_id,
+          heart_type: "comment",
+        },
+      });
+      handleHeartCount(-1);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [comment_id, handleHeartCount]);
 
   /* 시간 표기 형식 변환 */
   const formatDate = (dateString) => {
@@ -157,8 +174,15 @@ const CommentItem = ({
             <div className="comment__content">{newContent}</div>
           </>
         )}
-        <button className="comments__like" onClick={likeComment}>
-          <img className="comments__like__img" src={heart} alt="like" />
+        <button
+          className="comments__like"
+          onClick={isLiked ? deleteLikeComment : likeComment}
+        >
+          <img
+            className="comments__like__img"
+            src={isLiked ? heartFill : heart}
+            alt="like"
+          />
           <span className="comments__like__count">{heartCount}</span>
         </button>
       </div>

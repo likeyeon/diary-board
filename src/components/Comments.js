@@ -129,6 +129,7 @@ const Comment = ({ id, commentList }) => {
               updateComment={updateComment}
               deleteComment={deleteComment}
               heart_count={comment.heart_count}
+              is_hearted={comment.is_hearted}
             />
           ))}
       </div>

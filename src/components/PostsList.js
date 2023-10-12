@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import "../styles/post-list.scss";
 import notFound from "../assets/not-found.jpg";
+import heartFill from "../assets/heart-fill.svg";
 
 const PostsList = ({ postsList }) => {
   /* 시간 형식 변환 */
@@ -57,7 +58,10 @@ const PostsList = ({ postsList }) => {
                         <span className="post-list-item__member">
                           {post.author}
                         </span>
-                        <span className="post-list-item__likes">🖤 2</span>
+                        <span className="post-list-item__likes">
+                          <img src={heartFill} alt="heart" />
+                          <span>{post.heart_count}</span>
+                        </span>
                       </div>
                     </li>
                   </Link>
