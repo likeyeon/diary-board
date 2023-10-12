@@ -8,9 +8,17 @@ import chevronLeft from "../assets/chevron-left.svg";
 import verticalLine from "../assets/verticalLine.svg";
 import { isAuth } from "../utils/AuthApi";
 import store from "../redux/store";
-import AWS from "aws-sdk";
+import { s3Bucket } from "../utils/s3Bucket";
 
-const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
+const PostDetail = ({
+  id,
+  title,
+  content,
+  created_at,
+  updated_at,
+  author,
+  image_url,
+}) => {
   const navigate = useNavigate();
 
   const moveToUpdate = () => {
@@ -41,26 +49,15 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
     isShow(!show);
   }, [show]);
 
-  const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
-  const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
-  const REGION = process.env.REACT_APP_AWS_REGION;
-  const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
-
   /* 이미지 삭제 함수 */
   const deleteFile = async () => {
-    // AWS 액세스 키 설정
-    AWS.config.update({
-      accessKeyId: ACCESS_KEY,
-      secretAccessKey: SECRET_ACCESS_KEY,
-      region: REGION,
-    });
-
-    // AWS S3 객체 생성
-    const myBucket = new AWS.S3();
+    const myBucket = s3Bucket();
+    const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
 
     const params = {
       Bucket: S3_BUCKET,
-      Key: "좋아요 확인.png",
+      // Key: image_url,
+      Key: "np99ox9ld4.jpg",
     };
 
     try {
@@ -161,11 +158,19 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
             </div>
           </div>
           <div className="postDetail-contents__bottom">
-            <img
-              className="postDetail-contents__img"
-              src={notFound}
-              alt="notFound"
-            />
+            {image_url ? (
+              <img
+                className="postDetail-contents__img"
+                src="https://diary-board.s3.ap-northeast-2.amazonaws.com/np99ox9ld4.jpg" // 임의 url
+                alt="contents-img"
+              />
+            ) : (
+              <img
+                className="postDetail-contents__img"
+                src={notFound}
+                alt="contents-img-notFound"
+              />
+            )}
             <p className="postDetail-contents__content">{content}</p>
           </div>
         </div>

@@ -1,11 +1,10 @@
-import axios from "axios";
 import { useForm } from "react-hook-form";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import api from "../utils/api";
 import { Link, useNavigate } from "react-router-dom";
 import chevronLeft from "../assets/chevron-left.svg";
 import "../styles/post-form.scss";
-import AWS from "aws-sdk";
+import { s3Bucket } from "../utils/s3Bucket";
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -17,56 +16,51 @@ const CreatePost = () => {
     },
   });
 
-  const [myBucket, setMyBucket] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-
-  const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
-  const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
-  const REGION = process.env.REACT_APP_AWS_REGION;
-  const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
-
-  useEffect(() => {
-    // AWS 액세스 키 설정
-    AWS.config.update({
-      accessKeyId: ACCESS_KEY,
-      secretAccessKey: SECRET_ACCESS_KEY,
-    });
-
-    // AWS S3 객체 생성
-    const myBucket = new AWS.S3({
-      params: { Bucket: S3_BUCKET },
-      region: REGION,
-    });
-
-    setMyBucket(myBucket);
-  }, [ACCESS_KEY, SECRET_ACCESS_KEY, S3_BUCKET, REGION]);
+  let url = "";
 
   // 내 컴퓨터에서 파일 장착
   const handleFileInput = (e) => {
     setSelectedFile(e.target.files[0]);
   };
 
+  // 파일 이름 임의의 랜덤 변수로 전환
+  const getRandomFilename = (fileName) => {
+    const originalNameParts = fileName.split(".");
+    const extension = originalNameParts.pop();
+    const randomString = Math.random().toString(36).substring(2);
+    return `${randomString}.${extension}`;
+  };
+
   // 앞에서 장착한 파일을 S3으로 전송
   const uploadFile = (file) => {
+    const myBucket = s3Bucket();
+    const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
+    const REGION = process.env.REACT_APP_AWS_REGION;
+
     const params = {
       ACL: "public-read",
       Body: file,
       Bucket: S3_BUCKET,
-      Key: file.name,
+      Key: getRandomFilename(file.name),
     };
 
     myBucket.putObject(params).send((error) => {
       if (error) {
         console.log(error);
       } else {
-        const url = myBucket.getSignedUrl("getObject", { Key: params.Key });
+        // url = myBucket.getSignedUrl("getObject", {
+        //   Bucket: params.Bucket,
+        //   Key: params.Key,
+        // });
+        url = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${params.Key}`;
       }
     });
   };
 
   const onSubmit = useCallback(async () => {
     try {
-      await api.post("/posts", getValues());
+      await api.post("/posts", getValues()); // 이미지 포함 시 -> {...getValues(), image_url: url}
       alert("등록이 완료되었습니다.");
       navigate("/posts");
     } catch (error) {
@@ -113,13 +107,26 @@ const CreatePost = () => {
               {...register("content", { required: true })}
             />
             <div className="postForm-form__imageFile">
-              <input
-                type="file"
-                id="chooseImg"
-                name="chooseImg"
-                accept="image/*"
-                onChange={handleFileInput}
-              />
+              {selectedFile ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setSelectedFile(null);
+                    }}
+                  >
+                    파일 삭제
+                  </button>
+                  <span>{selectedFile.name}</span>
+                </>
+              ) : (
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleFileInput}
+                />
+              )}
             </div>
           </div>
           <button type="submit" className="postForm-form__btn">
