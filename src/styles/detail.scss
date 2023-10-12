@@ -41,9 +41,20 @@
 
     &__top {
       display: flex;
-      flex-direction: column;
       gap: util.rem(8px);
       padding-bottom: util.rem(30px);
+      justify-content: space-between;
+
+      &__like {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: util.rem(5px) util.rem(10px);
+        border-radius: util.rem(3px);
+        border: 1px solid colors.$stone_400;
+        cursor: pointer;
+      }
     }
 
     &__title {

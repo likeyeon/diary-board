@@ -1,5 +1,5 @@
 import axios from "axios";
-import { isAuth } from "./jwtUtils";
+import { isLogin } from "./jwtUtils";
 import { setToken } from "../redux/AuthReducer";
 import store from "../redux/store";
 import { logoutAuth } from "../utils/AuthApi";
@@ -30,7 +30,7 @@ const reissueAccessToken = async (refreshToken) => {
 instance.interceptors.request.use(
   (config) => {
     const accessToken = getAccessToken();
-    if (accessToken && isAuth(accessToken)) {
+    if (accessToken && isLogin(accessToken)) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
@@ -46,6 +46,7 @@ instance.interceptors.response.use(
 
   async (error) => {
     const originalRequest = error.config;
+    console.log(error);
 
     // 토큰이 유효하지 않은 경우 (ex. 기간만료, 이상한 토큰)
     if (error.response.status === 400 && !originalRequest._retry) {

@@ -4,7 +4,7 @@ import profile from "../assets/profile.svg";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { isAuth } from "../utils/jwtUtils";
+import { isLogin } from "../utils/jwtUtils";
 import "../styles/header.scss";
 
 const Header = () => {
@@ -15,7 +15,7 @@ const Header = () => {
   const [isLoggedIn, setisLoggedIn] = useState(false);
 
   useEffect(() => {
-    isAuth(accessToken) ? setisLoggedIn(true) : setisLoggedIn(false);
+    isLogin(accessToken) ? setisLoggedIn(true) : setisLoggedIn(false);
   }, [accessToken]);
 
   const handleMenuClick = () => {

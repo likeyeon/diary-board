@@ -1,7 +1,7 @@
 import jwtDecode from "jwt-decode";
 
 // 토큰 유효성 검사
-export const isAuth = (accessToken) => {
+export const isLogin = (accessToken) => {
   // 토큰이 없을 때
   if (!accessToken) {
     return false;
