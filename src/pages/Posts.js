@@ -15,11 +15,6 @@ const Posts = () => {
   const [stateOrderOption, setOrderOption] = useState("desc");
   const size = 8; //페이지 당 게시글 개수
 
-  /* 게시글 목록 받기 */
-  // const getPostsList = useCallback(() => {
-  //   filterPosts();
-  // }, []);
-
   /* 모든 옵션을 쿼리 파라미터와 함께 api 호출 */
   const filterPosts = async (page, orderOption, searchOption, searchText) => {
     try {

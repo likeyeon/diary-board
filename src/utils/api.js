@@ -46,6 +46,7 @@ instance.interceptors.response.use(
 
   async (error) => {
     const originalRequest = error.config;
+    console.log(error);
 
     // 토큰이 유효하지 않은 경우 (ex. 기간만료, 이상한 토큰)
     if (error.response.status === 400 && !originalRequest._retry) {
