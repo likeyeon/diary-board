@@ -8,8 +8,17 @@ import chevronLeft from "../assets/chevron-left.svg";
 import verticalLine from "../assets/verticalLine.svg";
 import { isAuth } from "../utils/AuthApi";
 import store from "../redux/store";
+import { s3Bucket } from "../utils/s3Bucket";
 
-const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
+const PostDetail = ({
+  id,
+  title,
+  content,
+  created_at,
+  updated_at,
+  author,
+  image_url,
+}) => {
   const navigate = useNavigate();
 
   const moveToUpdate = () => {
@@ -40,6 +49,25 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
     isShow(!show);
   }, [show]);
 
+  /* 이미지 삭제 함수 */
+  const deleteFile = async () => {
+    const myBucket = s3Bucket();
+    const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
+
+    const params = {
+      Bucket: S3_BUCKET,
+      // Key: image_url,
+      Key: "np99ox9ld4.jpg",
+    };
+
+    try {
+      await myBucket.deleteObject(params).promise();
+      console.log("file deleted Successfully");
+    } catch (err) {
+      console.log("ERROR in file Deleting : " + JSON.stringify(err));
+    }
+  };
+
   /* 삭제 확인 버튼 클릭 시 */
   const deletePost = useCallback(async () => {
     setShow();
@@ -53,6 +81,12 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
       } else console.log(error);
     }
   }, [id, navigate, setShow]);
+
+  /* 이미지 삭제, 게시글 삭제 함수 */
+  const handleDelete = () => {
+    deleteFile();
+    deletePost();
+  };
 
   const accessToken = useSelector((state) => state.Auth.accessToken);
 
@@ -124,11 +158,19 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
             </div>
           </div>
           <div className="postDetail-contents__bottom">
-            <img
-              className="postDetail-contents__img"
-              src={notFound}
-              alt="notFound"
-            />
+            {image_url ? (
+              <img
+                className="postDetail-contents__img"
+                src="https://diary-board.s3.ap-northeast-2.amazonaws.com/np99ox9ld4.jpg" // 임의 url
+                alt="contents-img"
+              />
+            ) : (
+              <img
+                className="postDetail-contents__img"
+                src={notFound}
+                alt="contents-img-notFound"
+              />
+            )}
             <p className="postDetail-contents__content">{content}</p>
           </div>
         </div>
@@ -142,7 +184,10 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
                 <button onClick={setShow} className="modal__button--cancel">
                   취소
                 </button>
-                <button onClick={deletePost} className="modal__button--confirm">
+                <button
+                  onClick={handleDelete}
+                  className="modal__button--confirm"
+                >
                   확인
                 </button>
               </div>
