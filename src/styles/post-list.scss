@@ -45,8 +45,15 @@
   &__bottom {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: util.rem(14px);
     border-top: 1px solid #d6d3d1;
+  }
+
+  &__likes {
+    display: flex;
+    align-items: center;
+    gap: util.rem(1.5px);
   }
 }
 
