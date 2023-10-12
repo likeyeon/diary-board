@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import api from "../utils/api";
 import { Link, useNavigate } from "react-router-dom";
 import chevronLeft from "../assets/chevron-left.svg";
 import "../styles/post-form.scss";
+import AWS from "aws-sdk";
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -15,6 +16,53 @@ const CreatePost = () => {
       content: "",
     },
   });
+
+  const [myBucket, setMyBucket] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
+  const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
+  const REGION = process.env.REACT_APP_AWS_REGION;
+  const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
+
+  useEffect(() => {
+    // AWS 액세스 키 설정
+    AWS.config.update({
+      accessKeyId: ACCESS_KEY,
+      secretAccessKey: SECRET_ACCESS_KEY,
+    });
+
+    // AWS S3 객체 생성
+    const myBucket = new AWS.S3({
+      params: { Bucket: S3_BUCKET },
+      region: REGION,
+    });
+
+    setMyBucket(myBucket);
+  }, [ACCESS_KEY, SECRET_ACCESS_KEY, S3_BUCKET, REGION]);
+
+  // 내 컴퓨터에서 파일 장착
+  const handleFileInput = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  // 앞에서 장착한 파일을 S3으로 전송
+  const uploadFile = (file) => {
+    const params = {
+      ACL: "public-read",
+      Body: file,
+      Bucket: S3_BUCKET,
+      Key: file.name,
+    };
+
+    myBucket.putObject(params).send((error) => {
+      if (error) {
+        console.log(error);
+      } else {
+        const url = myBucket.getSignedUrl("getObject", { Key: params.Key });
+      }
+    });
+  };
 
   const onSubmit = useCallback(async () => {
     try {
@@ -27,6 +75,14 @@ const CreatePost = () => {
       } else console.log(error);
     }
   }, [getValues, navigate]);
+
+  const handleFormSubmit = (data) => {
+    if (selectedFile) {
+      uploadFile(selectedFile);
+    }
+
+    onSubmit(data);
+  };
 
   return (
     <div className="postForm-wrapper">
@@ -44,7 +100,7 @@ const CreatePost = () => {
         <form
           method="post"
           className="postForm-form"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(handleFormSubmit)}
         >
           <input
             type="text"
@@ -62,6 +118,7 @@ const CreatePost = () => {
                 id="chooseImg"
                 name="chooseImg"
                 accept="image/*"
+                onChange={handleFileInput}
               />
             </div>
           </div>

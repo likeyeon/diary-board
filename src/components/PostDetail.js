@@ -8,6 +8,7 @@ import chevronLeft from "../assets/chevron-left.svg";
 import verticalLine from "../assets/verticalLine.svg";
 import { isAuth } from "../utils/AuthApi";
 import store from "../redux/store";
+import AWS from "aws-sdk";
 
 const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
   const navigate = useNavigate();
@@ -40,6 +41,36 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
     isShow(!show);
   }, [show]);
 
+  const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
+  const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
+  const REGION = process.env.REACT_APP_AWS_REGION;
+  const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
+
+  /* 이미지 삭제 함수 */
+  const deleteFile = async () => {
+    // AWS 액세스 키 설정
+    AWS.config.update({
+      accessKeyId: ACCESS_KEY,
+      secretAccessKey: SECRET_ACCESS_KEY,
+      region: REGION,
+    });
+
+    // AWS S3 객체 생성
+    const myBucket = new AWS.S3();
+
+    const params = {
+      Bucket: S3_BUCKET,
+      Key: "좋아요 확인.png",
+    };
+
+    try {
+      await myBucket.deleteObject(params).promise();
+      console.log("file deleted Successfully");
+    } catch (err) {
+      console.log("ERROR in file Deleting : " + JSON.stringify(err));
+    }
+  };
+
   /* 삭제 확인 버튼 클릭 시 */
   const deletePost = useCallback(async () => {
     setShow();
@@ -53,6 +84,12 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
       } else console.log(error);
     }
   }, [id, navigate, setShow]);
+
+  /* 이미지 삭제, 게시글 삭제 함수 */
+  const handleDelete = () => {
+    deleteFile();
+    deletePost();
+  };
 
   const accessToken = useSelector((state) => state.Auth.accessToken);
 
@@ -142,7 +179,10 @@ const PostDetail = ({ id, title, content, created_at, updated_at, author }) => {
                 <button onClick={setShow} className="modal__button--cancel">
                   취소
                 </button>
-                <button onClick={deletePost} className="modal__button--confirm">
+                <button
+                  onClick={handleDelete}
+                  className="modal__button--confirm"
+                >
                   확인
                 </button>
               </div>
