@@ -22,7 +22,7 @@ const PostDetail = ({
   author,
   heart_count,
   is_hearted,
-  image_url,
+  image,
 }) => {
   const navigate = useNavigate();
 
@@ -33,9 +33,12 @@ const PostDetail = ({
   const [heartCount, setHeartCount] = useState(heart_count);
   const [isLiked, setIsLiked] = useState(false);
 
+  const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
+  const REGION = process.env.REACT_APP_AWS_REGION;
+
   /* 게시글 수정 함수 */
   const moveToUpdate = () => {
-    navigate(`/posts/update/${id}`);
+    navigate(`/board/update/${id}`);
   };
 
   /* 시간 표기 형식 변환 */
@@ -69,8 +72,7 @@ const PostDetail = ({
 
     const params = {
       Bucket: S3_BUCKET,
-      // Key: image_url,
-      Key: "np99ox9ld4.jpg",
+      Key: image,
     };
 
     try {
@@ -87,7 +89,7 @@ const PostDetail = ({
     try {
       await api.delete(`/posts/${id}`);
       alert("게시글이 삭제되었습니다");
-      navigate("/posts");
+      navigate("/board");
     } catch (error) {
       if (error.response.status === 400) {
         alert(error.response.data.message);
@@ -109,8 +111,6 @@ const PostDetail = ({
     deleteFile();
     deletePost();
   };
-
-  const accessToken = useSelector((state) => state.Auth.accessToken);
 
   /* 좋아요 post */
   const likePost = useCallback(async () => {
@@ -172,7 +172,7 @@ const PostDetail = ({
               src={chevronLeft}
               alt="chevron-left"
             />
-            <Link to={"/posts"} className="postDetail-link__previous--text">
+            <Link to={"/board"} className="postDetail-link__previous--text">
               홈으로
             </Link>
           </div>
@@ -242,10 +242,10 @@ const PostDetail = ({
             )}
           </div>
           <div className="postDetail-contents__bottom">
-            {image_url ? (
+            {image ? (
               <img
                 className="postDetail-contents__img"
-                src="https://diary-board.s3.ap-northeast-2.amazonaws.com/np99ox9ld4.jpg" // 임의 url
+                src={`https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${image}`} // 임의 url
                 alt="contents-img"
               />
             ) : (

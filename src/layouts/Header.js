@@ -1,14 +1,18 @@
 import logo from "../assets/logo.svg";
 import menu from "../assets/menu.svg";
 import profile from "../assets/profile.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { isLogin } from "../utils/jwtUtils";
 import "../styles/header.scss";
+import { logoutAuth } from "../utils/AuthApi";
+import { removeCookie } from "../utils/cookies";
 
 const Header = () => {
   const accessToken = useSelector((state) => state.Auth.accessToken);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [menuClicked, setMenuClicked] = useState(false);
   const [profileClicked, setProfileClicked] = useState(false);
@@ -26,6 +30,10 @@ const Header = () => {
     setProfileClicked(!profileClicked);
   };
 
+  const logoutMember = () => {
+    logoutAuth(dispatch, removeCookie, navigate);
+  };
+
   return (
     <div className="header-wrapper">
       <div className="header">
@@ -34,14 +42,14 @@ const Header = () => {
         </div>
         <div className="header-link">
           <div className="header-link-logo">
-            <Link to="/posts">
+            <Link to="/board">
               <img src={logo} alt="logo" />
             </Link>
           </div>
 
           <div className="header-link-menu">
-            <Link to="/posts">게시판</Link>
-            <Link to="/posts/create">글쓰기</Link>
+            <Link to="/board">게시판</Link>
+            <Link to="/board/create">글쓰기</Link>
           </div>
         </div>
         <div
@@ -49,8 +57,8 @@ const Header = () => {
             "header-link-menu--mobile" + (menuClicked ? "--active" : "")
           }
         >
-          <Link to="/posts">게시판</Link>
-          <Link to="/posts/create">글쓰기</Link>
+          <Link to="/board">게시판</Link>
+          <Link to="/board/create">글쓰기</Link>
         </div>
         <div className="header-profile">
           {isLoggedIn ? (
@@ -68,7 +76,7 @@ const Header = () => {
               >
                 <Link to="/profile">프로필 설정</Link>
                 <Link to="/">쪽지함</Link>
-                <Link to="/">로그아웃</Link>
+                <Link onClick={logoutMember}>로그아웃</Link>
               </div>
             </>
           ) : (

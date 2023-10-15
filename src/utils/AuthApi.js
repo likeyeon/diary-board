@@ -1,7 +1,8 @@
 import axios from "axios";
-import { setToken, removeToken } from "../redux/AuthReducer";
+import { setToken } from "../redux/AuthReducer";
 import api from "../utils/api";
 import store from "../redux/store";
+import jwtDecode from "jwt-decode";
 
 /* 회원가입 */
 export const AuthSignup = async (data, navigate) => {
@@ -30,7 +31,14 @@ export const AuthSignup = async (data, navigate) => {
 };
 
 /* 로그인 */
-export const AuthLogin = async (data, dispatch, setCookie, state, navigate) => {
+export const AuthLogin = async (
+  data,
+  dispatch,
+  setCookie,
+  state,
+  navigate,
+  onSilentRefresh
+) => {
   await axios
     .post("/members/login", data)
     // 로그인 성공
@@ -40,9 +48,15 @@ export const AuthLogin = async (data, dispatch, setCookie, state, navigate) => {
         setCookie("refreshToken", response.data.refresh_token, {
           path: "/",
         });
-        alert("로그인 성공!");
 
-        state ? navigate(state) : navigate("/posts");
+        const decodedToken = jwtDecode(response.data.access_token);
+        const delay = decodedToken.exp * 1000 - Date.now() - 60 * 1000;
+        setTimeout(onSilentRefresh, delay);
+
+        alert("로그인 성공!");
+        console.log(response);
+
+        state ? navigate(state) : navigate("/board");
       }
     })
     // 로그인 실패
@@ -74,8 +88,7 @@ export const updateAuth = async (accessToken, data) => {
     const response = await axios.patch(
       "/members",
       {
-        nickname: data.nickname,
-        password: data.newPassword,
+        data,
       },
       {
         headers: {
@@ -87,7 +100,7 @@ export const updateAuth = async (accessToken, data) => {
       alert(response.data.message);
     }
   } catch (error) {
-    console.log(error);
+    alert(error.response.data.message);
   }
 };
 
@@ -109,12 +122,13 @@ export const deleteAuth = async (accessToken, removeCookie, navigate) => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+    store.dispatch({ type: "REMOVE_TOKEN" });
     removeCookie("refreshToken", {
       path: "/",
     });
     if (response.status === 200) {
       alert(response.data.message);
-      navigate("/posts");
+      navigate("/board");
     }
   } catch (error) {
     console.log(error);

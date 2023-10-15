@@ -4,6 +4,7 @@ import CommentItem from "./CommentItem";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { isAuth } from "../utils/AuthApi";
+import { useNavigate } from "react-router-dom";
 import "../styles/comments.scss";
 
 const Comment = ({ id, commentList }) => {
@@ -83,6 +84,12 @@ const Comment = ({ id, commentList }) => {
     [comments]
   );
 
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    navigate("/login", { state: `/board/${id}` });
+  };
+
   return (
     <div className="comments-wrapper">
       <div className="comments-header">
@@ -108,7 +115,7 @@ const Comment = ({ id, commentList }) => {
           <>
             <textarea className="comments-header__textarea" readOnly />
             <span className="comments-header__textarea__notice">
-              작성하려면 <Link to={"/login"}>로그인</Link>이 필요합니다.
+              작성하려면 <span onClick={handleLogin}>로그인</span>이 필요합니다.
             </span>
             <button className="comments-header__button" disabled>
               등록하기

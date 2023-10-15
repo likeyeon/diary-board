@@ -59,6 +59,7 @@
 
     &__title {
       @include typo.titleFont;
+      margin-bottom: util.rem(8px);
     }
 
     &__info {
