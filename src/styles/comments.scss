@@ -25,10 +25,10 @@
       &__notice {
         position: absolute;
         left: util.rem(16px);
-        top: util.rem(46px);
+        top: util.rem(55px);
         color: colors.$stone_400;
 
-        a {
+        span {
           text-decoration: underline !important;
         }
       }
