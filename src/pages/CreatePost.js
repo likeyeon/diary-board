@@ -1,13 +1,16 @@
 import { useForm } from "react-hook-form";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import api from "../utils/api";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import chevronLeft from "../assets/chevron-left.svg";
 import "../styles/post-form.scss";
 import { s3Bucket } from "../utils/s3Bucket";
+import { useSelector } from "react-redux";
 
 const CreatePost = () => {
   const navigate = useNavigate();
+  const accessToken = useSelector((state) => state.Auth.accessToken);
 
   const { register, getValues, handleSubmit } = useForm({
     defaultValues: {
@@ -16,12 +19,15 @@ const CreatePost = () => {
     },
   });
 
-  const [selectedFile, setSelectedFile] = useState(null);
-  let url = "";
+  const [selectedFile, setSelectedFile] = useState("");
+  const [fileName, setFileName] = useState("");
 
   // 내 컴퓨터에서 파일 장착
   const handleFileInput = (e) => {
     setSelectedFile(e.target.files[0]);
+    const randomFileName = getRandomFilename(e.target.files[0].name);
+    setFileName(randomFileName);
+    console.log(e.target.files[0]);
   };
 
   // 파일 이름 임의의 랜덤 변수로 전환
@@ -34,47 +40,63 @@ const CreatePost = () => {
 
   // 앞에서 장착한 파일을 S3으로 전송
   const uploadFile = (file) => {
-    const myBucket = s3Bucket();
-    const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
-    const REGION = process.env.REACT_APP_AWS_REGION;
+    return new Promise((resolve, reject) => {
+      const myBucket = s3Bucket();
+      const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
+      const REGION = process.env.REACT_APP_AWS_REGION;
 
-    const params = {
-      ACL: "public-read",
-      Body: file,
-      Bucket: S3_BUCKET,
-      Key: getRandomFilename(file.name),
-    };
+      const params = {
+        ACL: "public-read",
+        Body: file,
+        Bucket: S3_BUCKET,
+        Key: fileName,
+      };
 
-    myBucket.putObject(params).send((error) => {
-      if (error) {
-        console.log(error);
-      } else {
-        // url = myBucket.getSignedUrl("getObject", {
-        //   Bucket: params.Bucket,
-        //   Key: params.Key,
-        // });
-        url = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${params.Key}`;
-      }
+      setFileName(params.Key); // Update the url state
+
+      myBucket.putObject(params).send((error) => {
+        if (error) {
+          console.log(error);
+          reject(error);
+        } else {
+          const urlValue = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${params.Key}`;
+          resolve(urlValue);
+        }
+      });
     });
   };
 
   const onSubmit = useCallback(async () => {
     try {
-      await api.post("/posts", getValues()); // 이미지 포함 시 -> {...getValues(), image_url: url}
+      await axios.post(
+        "/posts",
+        { ...getValues(), image: fileName },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      // 이미지 포함 시 -> {...getValues(), image_url: url}
       alert("등록이 완료되었습니다.");
-      navigate("/posts");
+      navigate("/board");
     } catch (error) {
       if (error.response.status === 400) {
         alert(error.response.data.message);
+        console.log(error);
       } else console.log(error);
     }
-  }, [getValues, navigate]);
+  }, [getValues, navigate, accessToken, fileName]);
 
-  const handleFormSubmit = (data) => {
+  const handleFormSubmit = async (data) => {
     if (selectedFile) {
-      uploadFile(selectedFile);
+      try {
+        await uploadFile(selectedFile);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        return;
+      }
     }
-
     onSubmit(data);
   };
 
@@ -86,7 +108,7 @@ const CreatePost = () => {
           src={chevronLeft}
           alt="chevron-left"
         />
-        <Link to={"/posts"} className="postForm-previous__text">
+        <Link to={"/board"} className="postForm-previous__text">
           돌아가기
         </Link>
       </div>
@@ -111,7 +133,7 @@ const CreatePost = () => {
                 <>
                   <button
                     onClick={() => {
-                      setSelectedFile(null);
+                      setSelectedFile("");
                     }}
                   >
                     파일 삭제

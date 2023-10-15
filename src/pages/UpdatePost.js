@@ -2,12 +2,16 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import chevronLeft from "../assets/chevron-left.svg";
-import api from "../utils/api";
 import { s3Bucket } from "../utils/s3Bucket";
+import "../styles/post-form.scss";
+import axios from "axios";
+import { useSelector } from "react-redux";
 
 const UpdatePost = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const accessToken = useSelector((state) => state.Auth.accessToken);
 
   const { register, setValue, handleSubmit } = useForm({
     defaultValues: {
@@ -16,31 +20,33 @@ const UpdatePost = () => {
     },
   });
 
-  const [selectedFile, setSelectedFile] = useState(null);
-  let url = "";
+  const [selectedFile, setSelectedFile] = useState(""); // 이미지 파일 객체
+  const [fileName, setFileName] = useState(""); // 이미지 이름
+  const [dataFileName, setDataFileName] = useState(""); // 초기 데이터에서 받은 이미지 이름
+  const [firstFileName, setFirstFileName] = useState(""); // 초기 데이터에서 받은 이미지 이름 (불변)
+  const [loading, setLoading] = useState(true);
 
   // 내 컴퓨터에서 파일 장착
   const handleFileInput = (e) => {
     setSelectedFile(e.target.files[0]);
-    console.log(selectedFile);
+    const randomFileName = getRandomFilename(e.target.files[0].name);
+    setFileName(randomFileName);
   };
 
-  /* 이미지 삭제 함수 */
+  /* S3 업로드한 이미지 삭제 */
   const deleteFile = async () => {
     const myBucket = s3Bucket();
     const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
 
     const params = {
       Bucket: S3_BUCKET,
-      // Key: selectedFile.name && selectedFile,
-      Key: "np99ox9ld4.jpg", //임의 테스트
+      Key: firstFileName,
     };
 
     try {
       await myBucket.deleteObject(params).promise();
-      setSelectedFile(null);
     } catch (err) {
-      console.log("ERROR in file Deleting : " + JSON.stringify(err));
+      console.log(err);
     }
   };
 
@@ -54,52 +60,42 @@ const UpdatePost = () => {
 
   /* 파일 업로드 */
   const uploadFile = (file) => {
-    const myBucket = s3Bucket();
-    const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
-    const REGION = process.env.REACT_APP_AWS_REGION;
+    return new Promise((resolve, reject) => {
+      const myBucket = s3Bucket();
+      const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
+      const REGION = process.env.REACT_APP_AWS_REGION;
 
-    const params = {
-      ACL: "public-read",
-      Body: file,
-      Bucket: S3_BUCKET,
-      Key: getRandomFilename(file.name),
-    };
+      const params = {
+        ACL: "public-read",
+        Body: file,
+        Bucket: S3_BUCKET,
+        Key: firstFileName || fileName,
+      };
 
-    myBucket.putObject(params).send((error) => {
-      if (error) {
-        console.log(error);
-      } else {
-        url = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${params.Key}`;
-      }
+      myBucket.putObject(params).send((error) => {
+        if (error) {
+          console.log(error);
+        } else {
+          const urlValue = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${fileName}`;
+          resolve(urlValue);
+        }
+      });
     });
-  };
-
-  /* url key 값만 가져오기 */
-  const getUrlKey = (url) => {
-    const myURL = new URL(url);
-    const path = myURL.pathname; // "/bz7dp1cb1ll.jpeg"
-
-    // "/"로 시작하는 경우 제거
-    const filename = path.startsWith("/") ? path.slice(1) : path;
-
-    return filename; // "bz7dp1cb1ll.jpeg"
   };
 
   const getPost = async () => {
     try {
-      const response = await api.get(`/posts/${id}`);
+      const response = await axios.get(`/posts/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       const data = { ...response.data };
-      // for (const key in data) {
-      //   setValue(key, data[key]);
-      // }
       setValue("title", data.title);
       setValue("content", data.content);
-      // setSelectedFile(getUrlKey(data.image_url));
-      setSelectedFile(
-        getUrlKey(
-          "https://diary-board.s3.ap-northeast-2.amazonaws.com/np99ox9ld4.jpg"
-        )
-      );
+      setDataFileName(data.image);
+      setFirstFileName(data.image);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -112,73 +108,116 @@ const UpdatePost = () => {
   const onSubmit = useCallback(
     async (data) => {
       try {
-        await api.patch(`posts/${id}`, {
-          title: data.title,
-          content: data.content,
-          // image_url: url
-        });
-        navigate(`/posts/${id}`);
+        await axios.patch(
+          `/posts/${id}`,
+          {
+            title: data.title,
+            content: data.content,
+            image: dataFileName || fileName,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        navigate(`/board/${id}`);
       } catch (error) {
         console.log(error);
       }
     },
-    [id, navigate]
+    [id, navigate, fileName, accessToken, dataFileName]
   );
 
-  const handleFormSubmit = (data) => {
-    deleteFile();
-    // 이미지를 업로드할 경우
+  const handleFormSubmit = async (data) => {
+    // 새로운 이미지를 업로드하는 경우
     if (selectedFile) {
-      uploadFile(selectedFile);
+      try {
+        if (dataFileName) {
+          await deleteFile();
+        }
+        await uploadFile(selectedFile);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        return;
+      }
+    }
+    // 이미지가 비어있는 경우
+    else if (!selectedFile && !dataFileName) {
+      try {
+        console.log("비어있음");
+        await deleteFile();
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        return;
+      }
     }
     onSubmit(data);
   };
 
-  return (
-    <div className="postForm-wrapper">
-      <div className="previous">
-        <img className="previous-icon" src={chevronLeft} alt="chevron-left" />
-        <Link to={`/posts/${id}`} className="previous-text">
-          돌아가기
-        </Link>
-      </div>
+  if (loading) return <div>loading...</div>;
+  else
+    return (
       <div className="postForm-wrapper">
-        <form
-          method="post"
-          className="postForm"
-          onSubmit={handleSubmit(handleFormSubmit)}
-        >
-          <input type="text" {...register("title", { required: true })} />
-          <textarea {...register("content", { required: true })} />
-          <div className="postForm-form__imageFile">
-            {selectedFile ? (
-              <>
-                <button
-                  onClick={() => {
-                    setSelectedFile(null);
-                  }}
-                >
-                  파일 삭제
-                </button>
-                <span>{selectedFile.name || selectedFile}</span>
-              </>
-            ) : (
-              <input
-                type="file"
-                id="image"
-                name="image"
-                accept="image/*"
-                onChange={handleFileInput}
-              />
-            )}
-          </div>
-          <button type="submit" className="submitButton">
-            작성완료
-          </button>
-        </form>
+        <div className="postForm-previous">
+          <img
+            className="postForm-previous-icon"
+            src={chevronLeft}
+            alt="chevron-left"
+          />
+          <Link to={`/board/${id}`} className="previous-text">
+            돌아가기
+          </Link>
+        </div>
+        <div className="postForm-wrapper">
+          <form
+            method="post"
+            className="postForm"
+            onSubmit={handleSubmit(handleFormSubmit)}
+          >
+            <input
+              type="text"
+              className="postForm-form__title"
+              {...register("title", { required: true })}
+            />
+            <textarea
+              className="postForm-form__textarea"
+              {...register("content", { required: true })}
+            />
+            <div className="postForm-form__imageFile">
+              {dataFileName || fileName ? (
+                <>
+                  <button
+                    onClick={() => {
+                      if (dataFileName) {
+                        setDataFileName("");
+                      } else if (fileName) {
+                        setSelectedFile("");
+                        setFileName("");
+                      }
+                    }}
+                  >
+                    파일 삭제
+                  </button>
+                  <span>{dataFileName ? dataFileName : fileName}</span>
+                </>
+              ) : (
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleFileInput}
+                />
+              )}
+            </div>
+            <button type="submit" className="postForm-form__btn">
+              작성완료
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
-  );
+    );
 };
 
 export default UpdatePost;

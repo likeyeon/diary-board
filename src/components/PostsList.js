@@ -4,6 +4,9 @@ import notFound from "../assets/not-found.jpg";
 import heartFill from "../assets/heart-fill.svg";
 
 const PostsList = ({ postsList }) => {
+  const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET_NAME;
+  const REGION = process.env.REACT_APP_AWS_REGION;
+
   /* 시간 형식 변환 */
   const formatDate = (dateString) => {
     const options = {
@@ -28,15 +31,19 @@ const PostsList = ({ postsList }) => {
             <ul className="post-list">
               {postsList.map((post) => (
                 <div className="post-list-item-wrapper" key={post.id}>
-                  <Link to={`/posts/${post.id}`}>
+                  <Link to={`/board/${post.id}`}>
                     <li
                       className="post-list-item"
                       style={{ textDecoration: "none" }}
                     >
                       <img
                         className="post-list-item__img"
-                        src={notFound}
-                        alt="notFound"
+                        src={
+                          post.image
+                            ? `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${post.image}`
+                            : notFound
+                        }
+                        alt={"post_image"}
                       />
 
                       <div className="post-list-item__top">
