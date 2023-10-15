@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { useSelector } from "react-redux";
 import { updateAuth, isAuth, logoutAuth, deleteAuth } from "../utils/AuthApi";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
@@ -14,6 +14,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [, , removeCookie] = useCookies(["refreshToken"]);
+  const defaultNicknameRef = useRef();
 
   const {
     register,
@@ -26,19 +27,23 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchNickname = async () => {
-      const defaultNickname = (await isAuth(accessToken)) ?? "";
+      defaultNicknameRef.current = (await isAuth(accessToken)) ?? "";
       // defaultNickname 값이 존재할 때만 실행
-      if (defaultNickname) {
+      if (defaultNicknameRef) {
         reset({
-          nickname: defaultNickname,
+          nickname: defaultNicknameRef.current,
         });
         setLoading(false);
       }
     };
     fetchNickname();
-  }, []);
+  }, [accessToken, reset]);
 
   const onSubmit = async (data) => {
+    if (data.newPassword && data.nickname === defaultNicknameRef.current) {
+      console.log("기존 닉네임 :" + defaultNicknameRef.current);
+      data = { newPassword: data.newPassword };
+    }
     await updateAuth(accessToken, data);
   };
 
@@ -63,7 +68,7 @@ const Profile = () => {
   });
 
   const newPasswordRules = register("newPassword", {
-    required: "새 비밀번호를 입력해주세요",
+    // required: "새 비밀번호를 입력해주세요",
     minLength: {
       value: 4,
       message: "비밀번호는 최소 4글자 이상이어야 합니다.",

@@ -6,12 +6,20 @@ import { AuthLogin } from "../utils/AuthApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
+import React, { useCallback } from "react";
+import axios from "axios";
+import { getCookie } from "../utils/cookies";
+import { setToken } from "../redux/AuthReducer";
+import store from "../redux/store";
+import jwtDecode from "jwt-decode";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [cookies, setCookie, removeCookie] = useCookies(["refreshToken"]);
+  const [, setCookie] = useCookies(["refreshToken"]);
   const { state } = useLocation();
+
+  const refreshToken = getCookie("refreshToken");
 
   const {
     register,
@@ -21,8 +29,37 @@ const Login = () => {
     validateCriteriaMode: "all",
   });
 
+  const onSilentRefresh = useCallback(() => {
+    // axios
+    //   .get("/members/reissue", {
+    //     headers: {
+    //       Authorization: `Bearer ${refreshToken}`,
+    //     },
+    //   })
+    //   .then((response) => {
+    //     store.dispatch(setToken(response.data.access_token));
+
+    //     //access token 만료 1분 전, 액세스 토큰 재발급
+    //     const decodedToken = jwtDecode(response.data.access_token);
+
+    //     const delay = decodedToken.exp * 1000 - Date.now() - 60 * 1000;
+    //     setTimeout(onSilentRefresh, delay);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+    console.log("exp");
+  }, []);
+
   const onSubmit = async (data) => {
-    await AuthLogin(data, dispatch, setCookie, state, navigate);
+    await AuthLogin(
+      data,
+      dispatch,
+      setCookie,
+      state,
+      navigate,
+      onSilentRefresh
+    );
   };
 
   const emailRules = register("email", {
