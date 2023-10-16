@@ -1,0 +1,55 @@
+@use "util";
+@use "typo";
+@use "colors";
+
+.postForm {
+  &-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-previous {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: util.rem(8px);
+    margin-bottom: util.rem(55px);
+
+    &__text {
+      font-size: util.rem(20px);
+    }
+  }
+
+  &-form {
+    &__title {
+      border: none;
+      border-bottom: 1px solid colors.$stone_400;
+      @include typo.titleFont;
+      width: 100%;
+      margin-bottom: util.rem(49px);
+    }
+
+    &__textarea {
+      border-radius: util.rem(10px);
+      border: 1px solid colors.$stone_400;
+      width: 100%;
+      height: util.rem(532px);
+      padding: util.rem(20px);
+    }
+
+    &__imageFile {
+      margin-top: util.rem(11px);
+    }
+
+    &__btn {
+      padding: util.rem(10px) util.rem(43px);
+      border-radius: util.rem(10px);
+      font-size: util.rem(20px);
+      color: colors.$white;
+      background: colors.$stone_600;
+      border: none;
+      margin-top: util.rem(67px);
+      float: right;
+    }
+  }
+}

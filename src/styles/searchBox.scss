@@ -1,0 +1,33 @@
+@use "util";
+@use "colors";
+
+.searchBox {
+  &-form {
+    display: flex;
+    justify-content: center;
+    gap: util.rem(9px);
+  }
+
+  &__select {
+    font-size: util.rem(16px);
+    padding: util.rem(9px) util.rem(11px);
+    border: 1px solid colors.$stone_300;
+    white-space: nowrap;
+  }
+
+  &__input {
+    width: util.rem(261px);
+    padding: util.rem(9px) util.rem(14px);
+    font-size: util.rem(18px);
+    border: 1px solid colors.$stone_300;
+  }
+
+  &__btn {
+    padding: util.rem(9px) util.rem(14px);
+    font-size: util.rem(18px);
+    color: colors.$white;
+    background-color: colors.$stone_500;
+    border: none;
+    white-space: nowrap;
+  }
+}

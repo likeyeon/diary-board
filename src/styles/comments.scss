@@ -1,0 +1,134 @@
+@use "util";
+@use "colors";
+@use "typo";
+@use "button";
+
+.comments {
+  &-header {
+    position: relative;
+
+    &__title {
+      font-size: util.rem(20px);
+      font-weight: 600;
+    }
+
+    &__textarea {
+      border-radius: util.rem(5px);
+      border-color: colors.$stone_300;
+      width: 100%;
+      height: util.rem(130px);
+      resize: none;
+      font-size: util.rem(18px);
+      padding: util.rem(16px);
+      margin: util.rem(20px) 0;
+
+      &__notice {
+        position: absolute;
+        left: util.rem(16px);
+        top: util.rem(55px);
+        color: colors.$stone_400;
+
+        span {
+          text-decoration: underline !important;
+        }
+      }
+    }
+
+    &__button {
+      @include button.smallSubmitBtn;
+      margin-left: auto;
+    }
+  }
+
+  &-body {
+    margin: util.rem(40px) 0;
+  }
+
+  &-comment {
+    border-bottom: 1px solid colors.$stone_300;
+    padding: util.rem(20px) 0;
+    position: relative;
+
+    .comment {
+      &__top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &__info {
+          display: flex;
+          align-items: center;
+          gap: util.rem(10px);
+        }
+
+        &__author {
+          font-weight: 600;
+        }
+
+        &__menu {
+          cursor: pointer;
+        }
+      }
+
+      &__modal {
+        position: absolute;
+        top: util.rem(50px);
+        right: 0;
+        z-index: 1;
+        background-color: colors.$white;
+        border: 1px solid colors.$stone_400;
+        border-radius: 3px;
+
+        &__modify,
+        &__delete {
+          padding: util.rem(13px);
+          cursor: pointer;
+        }
+      }
+
+      &__content {
+        margin: util.rem(23px) 0;
+
+        &--modify {
+          border-radius: util.rem(5px);
+          border-color: colors.$stone_300;
+          width: 100%;
+          height: util.rem(100px);
+          resize: none;
+          font-size: util.rem(16px);
+          padding: util.rem(16px);
+          margin: util.rem(10px) 0;
+        }
+      }
+
+      &__button {
+        display: flex;
+        justify-content: end;
+        gap: util.rem(10px);
+
+        &__cancel,
+        &__complete {
+          border: 1px solid colors.$stone_400;
+          border-radius: 3px;
+          background-color: colors.$white;
+          display: flex;
+          padding: util.rem(5px) util.rem(10px);
+          align-items: center;
+          font-size: util.rem(16px);
+        }
+      }
+    }
+  }
+
+  &__like {
+    border: 1px solid colors.$stone_400;
+    border-radius: 3px;
+    background-color: colors.$white;
+    display: flex;
+    padding: util.rem(5px) util.rem(10px);
+    align-items: center;
+    gap: util.rem(3px);
+    font-size: util.rem(16px);
+    cursor: pointer;
+  }
+}

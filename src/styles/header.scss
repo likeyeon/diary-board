@@ -1,0 +1,143 @@
+@use "util";
+@use "colors";
+@use "typo";
+
+.header-wrapper {
+  padding: util.rem(10px) util.rem(20px);
+  border-bottom: 1px solid colors.$stone_100;
+  background-color: colors.$white;
+  box-shadow: 0px 1px 2px 0px rgba(28, 25, 23, 0.1);
+  position: relative;
+  // top: 0;
+  // left: 0;
+  // right: 0;
+}
+
+.header {
+  display: flex;
+  max-width: util.rem(1440px);
+  margin: 0 auto;
+  justify-content: space-between;
+  align-items: center;
+  font-size: util.rem(20px);
+  font-style: normal;
+  font-weight: 700;
+
+  &-toggleBtn {
+    display: none;
+  }
+
+  &-link {
+    display: flex;
+
+    &-menu {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-left: util.rem(40px);
+
+      a {
+        padding: util.rem(4px);
+      }
+
+      :nth-child(2) {
+        margin-left: util.rem(40px);
+      }
+
+      &--mobile,
+      &--mobile--active {
+        display: none;
+      }
+    }
+  }
+
+  &-profile {
+    position: relative;
+
+    &__img {
+      cursor: pointer;
+    }
+
+    &--modal {
+      display: none;
+
+      &--active {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        background-color: colors.$white;
+        top: 110%;
+        right: 15%;
+        width: util.rem(141px);
+        padding: util.rem(4px) 0;
+        border-radius: util.rem(5px);
+        border: 1px solid colors.$stone_300;
+        font-size: util.rem(16px);
+        font-weight: 500;
+        box-shadow: 0px 4px 8px 0px rgba(28, 25, 23, 0.1);
+
+        a {
+          padding: util.rem(15px) util.rem(10px);
+
+          &:hover {
+            background-color: colors.$stone_100;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: util.rem(481px)) and (max-width: util.rem(768px)) {
+  .header-wrapper {
+    padding: util.rem(20px);
+  }
+
+  .header-link-menu--mobile,
+  .header-link-menu--mobile--active {
+    display: none;
+  }
+}
+
+@media screen and (max-width: util.rem(480px)) {
+  .header-wrapper {
+    padding: util.rem(20px);
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+
+    &-toggleBtn {
+      display: block;
+    }
+
+    &-link {
+      &-menu {
+        display: none;
+
+        &--mobile--active {
+          display: flex;
+          flex-direction: column;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          padding: util.rem(16px) 0;
+          gap: util.rem(16px);
+          border-bottom: 1px solid colors.$stone_100;
+          width: 100%;
+          background-color: colors.$white;
+          box-shadow: 0px 2px 6px 0px rgba(28, 25, 23, 0.1);
+
+          a {
+            padding: util.rem(16px) util.rem(20px);
+
+            &:hover {
+              background-color: colors.$stone_100;
+            }
+          }
+        }
+      }
+    }
+  }
+}

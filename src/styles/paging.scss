@@ -1,0 +1,25 @@
+@use "util";
+@use "colors";
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-bottom: util.rem(37px);
+
+  li {
+    padding: util.rem(12px) util.rem(16px);
+    border: 1px solid colors.$stone_300;
+    a {
+      font-size: util.rem(16px);
+      color: colors.$stone_500;
+    }
+
+    &.active {
+      background-color: colors.$stone_600;
+
+      a {
+        color: colors.$white;
+      }
+    }
+  }
+}

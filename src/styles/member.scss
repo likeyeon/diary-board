@@ -1,0 +1,111 @@
+@use "util";
+@use "colors";
+@use "typo";
+@use "button";
+
+.form {
+  display: block;
+  width: 100%;
+
+  &-wrapper {
+    margin: 0 auto;
+    max-width: util.rem(544px);
+  }
+
+  &-wrapperInner {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__title {
+    @include typo.titleFont;
+    text-align: center;
+    margin-bottom: util.rem(58px);
+
+    &--middle {
+      @include typo.titleMiddleFont;
+    }
+  }
+
+  &-block {
+    margin-bottom: util.rem(40px);
+  }
+}
+
+.inputField {
+  width: 100%;
+  margin-top: util.rem(18px);
+}
+
+.members_input {
+  display: block;
+  width: 100%;
+  font-size: util.rem(20px);
+  padding: util.rem(15px);
+  background-color: colors.$stone_100;
+  border-radius: util.rem(10px);
+  border: none;
+}
+
+.message {
+  color: colors.$red;
+  font-size: util.rem(15px);
+  font-weight: 500;
+  padding-top: util.rem(10px);
+}
+
+.form-button {
+  display: block;
+  background: colors.$stone_600;
+  color: colors.$white;
+  font-weight: 700;
+  font-size: util.rem(20px);
+  text-align: center;
+  padding: util.rem(15px) 0;
+  margin-top: util.rem(40px);
+  width: 100%;
+  border-radius: util.rem(10px);
+  border: none;
+  cursor: pointer;
+}
+
+.form-link {
+  display: flex;
+  justify-content: center;
+  gap: util.rem(43px);
+  margin: util.rem(9px) 0;
+  a {
+    color: colors.$stone_500 !important;
+    text-align: center;
+    font-size: util.rem(20px);
+    border-bottom: 1px solid colors.$stone_500;
+  }
+}
+
+.account-management {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: util.rem(40px);
+
+  &__buttons {
+    margin-top: util.rem(18px);
+    display: flex;
+    gap: util.rem(15px);
+
+    &__item {
+      &--logout {
+        @include button.tinyBtn(colors.$stone_900);
+      }
+
+      &--delete {
+        @include button.tinyBtn(colors.$red);
+      }
+    }
+  }
+}
