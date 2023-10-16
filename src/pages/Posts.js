@@ -12,14 +12,14 @@ const Posts = () => {
   const [statePage, setPage] = useState(0);
   const [stateSearchText, setSearchText] = useState("");
   const [stateSearchOption, setSearchOption] = useState("all");
-  const [stateOrderOption, setOrderOption] = useState("desc");
+  const [stateOrderOption, setOrderOption] = useState("id");
   const size = 8; //페이지 당 게시글 개수
 
   /* 모든 옵션을 쿼리 파라미터와 함께 api 호출 */
   const filterPosts = async (page, orderOption, searchOption, searchText) => {
     try {
       const response = await axios.get(
-        `/posts?page=${page}&&size=${size}&&direction=${orderOption}&&searchBy=${searchOption}&&keyword=${searchText}`
+        `/posts?page=${page}&&size=${size}&&sortBy=${orderOption}&&searchBy=${searchOption}&&keyword=${searchText}`
       );
       setTotalPostCount(response.data.totalElements);
       setPostsList(response.data.content);
@@ -32,7 +32,6 @@ const Posts = () => {
   const handleSearch = async (searchOption, searchText) => {
     setSearchOption(searchOption);
     setSearchText(searchText);
-    console.log(searchOption, searchText);
     filterPosts(statePage, stateOrderOption, searchOption, searchText);
   };
 

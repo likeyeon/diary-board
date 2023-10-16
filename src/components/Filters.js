@@ -2,12 +2,12 @@ import "../styles/post-filter.scss";
 import { useState } from "react";
 
 const Filters = ({ onOrder }) => {
-  const [orderOption, setOrderOption] = useState("asc");
+  const [orderOption, setOrderOption] = useState("id");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setOrderOption(e.target.value);
-    onOrder(orderOption);
+    onOrder(e.target.value);
   };
 
   return (
@@ -53,8 +53,8 @@ const Filters = ({ onOrder }) => {
             id="order"
             className="filter-order__select"
           >
-            <option value="asc">최신순</option>
-            <option value="desc">공감순</option>
+            <option value="id">최신순</option>
+            <option value="heart">공감순</option>
           </select>
         </div>
       </div>
