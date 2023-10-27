@@ -23,10 +23,12 @@ const PostsList = ({ postsList }) => {
     return formatted;
   };
 
+  console.log(postsList.length !== 0);
+
   return (
     <>
       <div className="post-list-wrapper">
-        {postsList.length ? (
+        {postsList && postsList.length !== 0 ? (
           <>
             <ul className="post-list">
               {postsList.map((post) => (
