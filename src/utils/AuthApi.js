@@ -66,6 +66,7 @@ export const AuthLogin = async (
         console.log(error);
       } else {
         console.log(error);
+        console.log(process.env.REACT_APP_DB_HOST);
       }
     });
 };
