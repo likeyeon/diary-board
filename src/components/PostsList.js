@@ -23,8 +23,6 @@ const PostsList = ({ postsList }) => {
     return formatted;
   };
 
-  console.log(postsList.length !== 0);
-
   return (
     <>
       <div className="post-list-wrapper">
