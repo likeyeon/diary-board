@@ -40,7 +40,7 @@ export const AuthLogin = async (
   onSilentRefresh
 ) => {
   await axios
-    .post("/members/login", data)
+    .post(`${process.env.REACT_APP_SERVER_URL}/members/login`, data)
     // 로그인 성공
     .then(function (response) {
       if (response.status === 200) {
