@@ -17,8 +17,8 @@ const DetailPost = () => {
     const getPost = async () => {
       try {
         const response = isLoggedIn
-          ? await api.get(`/posts/${id}`)
-          : await axios.get(`/posts/${id}`);
+          ? await api.get(process.env.REACT_APP_DB_HOST + `/posts/${id}`)
+          : await axios.get(process.env.REACT_APP_DB_HOST + `/posts/${id}`);
         if (response.status === 200) {
           console.log("response success");
           console.log(response);

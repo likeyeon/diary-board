@@ -69,7 +69,7 @@ const CreatePost = () => {
   const onSubmit = useCallback(async () => {
     try {
       await axios.post(
-        "/posts",
+        process.env.REACT_APP_DB_HOST + "/posts",
         { ...getValues(), image: fileName },
         {
           headers: {
