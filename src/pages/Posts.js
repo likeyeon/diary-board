@@ -30,7 +30,7 @@ const Posts = () => {
       if (startDate && endDate) {
         url += `&&startDate=${startDate}&&endDate=${endDate}`;
       }
-      const response = await axios.get(url);
+      const response = await axios.get(process.env.REACT_APP_DB_HOST + url);
       setTotalPostCount(response.data.totalElements);
       setPostsList(response.data.content);
     } catch (error) {

@@ -31,7 +31,10 @@ const Comment = ({ id, commentList }) => {
         post_id: id,
         content: content,
       };
-      const response = await api.post("/comments", comment);
+      const response = await api.post(
+        process.env.REACT_APP_DB_HOST + "/comments",
+        comment
+      );
       if (response.status === 200) {
         alert(response.data.message);
         window.location.reload();
@@ -54,7 +57,7 @@ const Comment = ({ id, commentList }) => {
   const updateComment = useCallback(
     async (id, newContent) => {
       try {
-        await api.patch(`comments/${id}`, {
+        await api.patch(process.env.REACT_APP_DB_HOST + `comments/${id}`, {
           content: newContent,
         });
         setComments(
@@ -75,7 +78,7 @@ const Comment = ({ id, commentList }) => {
   const deleteComment = useCallback(
     async (id) => {
       try {
-        await api.delete(`comments/${id}`);
+        await api.delete(process.env.REACT_APP_DB_HOST + `comments/${id}`);
         setComments(comments.filter((comment) => comment.comment_id !== id));
       } catch (error) {
         console.log(error.response.data.message);

@@ -7,7 +7,7 @@ import jwtDecode from "jwt-decode";
 /* 회원가입 */
 export const AuthSignup = async (data, navigate) => {
   await axios
-    .post(`/members`, {
+    .post(process.env.REACT_APP_DB_HOST + `/members`, {
       email: data.email,
       password: data.password,
       nickname: data.nickname,
@@ -73,7 +73,7 @@ export const AuthLogin = async (
 /* 회원 정보 조회 */
 export const isAuth = async () => {
   try {
-    const response = await api.get("/members");
+    const response = await api.get(process.env.REACT_APP_DB_HOST + "/members");
     if (response.status === 200) {
       return response.data.nickname;
     }
@@ -86,7 +86,7 @@ export const isAuth = async () => {
 export const updateAuth = async (accessToken, data) => {
   try {
     const response = await axios.patch(
-      "/members",
+      process.env.REACT_APP_DB_HOST + "/members",
       {
         data,
       },
@@ -117,11 +117,14 @@ export const logoutAuth = (dispatch, removeCookie, navigate) => {
 /* 회원탈퇴 */
 export const deleteAuth = async (accessToken, removeCookie, navigate) => {
   try {
-    const response = await axios.delete("/members", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await axios.delete(
+      process.env.REACT_APP_DB_HOST + "/members",
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
     store.dispatch({ type: "REMOVE_TOKEN" });
     removeCookie("refreshToken", {
       path: "/",

@@ -87,7 +87,7 @@ const PostDetail = ({
   const deletePost = useCallback(async () => {
     setShow();
     try {
-      await api.delete(`/posts/${id}`);
+      await api.delete(process.env.REACT_APP_DB_HOST + `/posts/${id}`);
       alert("게시글이 삭제되었습니다");
       navigate("/board");
     } catch (error) {
@@ -118,7 +118,7 @@ const PostDetail = ({
       if (!isLogin(accessToken)) {
         alert("로그인이 필요한 기능입니다");
       } else {
-        await api.post("/hearts", {
+        await api.post(process.env.REACT_APP_DB_HOST + "/hearts", {
           id: id,
           heart_type: "post",
         });
@@ -132,7 +132,7 @@ const PostDetail = ({
   /* 좋아요 delete */
   const deleteLikePost = useCallback(async () => {
     try {
-      await api.delete("/hearts", {
+      await api.delete(process.env.REACT_APP_DB_HOST + "/hearts", {
         data: {
           id: id,
           heart_type: "post",
