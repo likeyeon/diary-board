@@ -73,7 +73,7 @@ export const AuthLogin = async (
 /* 회원 정보 조회 */
 export const isAuth = async () => {
   try {
-    const response = await api.get(process.env.REACT_APP_DB_HOST + "/members");
+    const response = await api.get("/members");
     if (response.status === 200) {
       return response.data.nickname;
     }

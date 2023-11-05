@@ -7,7 +7,7 @@ import { getCookie, removeCookie } from "./cookies";
 import { useNavigate } from "react-router-dom";
 
 const instance = axios.create({
-  baseURL: process.env.REACT_APP_SERVER_URL,
+  baseURL: process.env.REACT_APP_DB_HOST,
 });
 
 // access token 값 획득, 설정 함수
@@ -17,9 +17,12 @@ const setAccessToken = (response) =>
 
 const reissueAccessToken = async (refreshToken) => {
   try {
-    const response = await axios.get("/reissue", {
-      headers: { Authorization: `Bearer ${refreshToken}` },
-    });
+    const response = await axios.get(
+      process.env.REACT_APP_DB_HOST + "/reissue",
+      {
+        headers: { Authorization: `Bearer ${refreshToken}` },
+      }
+    );
     setAccessToken(response);
   } catch (error) {
     console.log(error);

@@ -23,7 +23,7 @@ const App = () => {
 
   const onSilentRefresh = useCallback(() => {
     axios
-      .get("/members/reissue", {
+      .get(process.env.REACT_APP_DB_HOST + "/members/reissue", {
         headers: {
           Authorization: `Bearer ${refreshToken}`,
         },
