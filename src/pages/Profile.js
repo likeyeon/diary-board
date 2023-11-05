@@ -40,10 +40,19 @@ const Profile = () => {
   }, [accessToken, reset]);
 
   const onSubmit = async (data) => {
+    // 패스워드만 수정
     if (data.newPassword && data.nickname === defaultNicknameRef.current) {
-      console.log("기존 닉네임 :" + defaultNicknameRef.current);
-      data = { newPassword: data.newPassword };
+      data = { password: data.newPassword };
     }
+    // 닉네임만 수정
+    else if (!data.newPassword) {
+      data = { nickname: data.nickname };
+    }
+    // 둘 다 수정
+    else {
+      data = { nickname: data.nickname, password: data.newPassword };
+    }
+
     await updateAuth(accessToken, data);
   };
 
