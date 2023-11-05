@@ -87,9 +87,7 @@ export const updateAuth = async (accessToken, data) => {
   try {
     const response = await axios.patch(
       process.env.REACT_APP_DB_HOST + "/members",
-      {
-        data,
-      },
+      data,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

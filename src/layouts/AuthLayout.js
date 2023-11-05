@@ -19,7 +19,7 @@ const AuthLayout = () => {
 
   const onSilentRefresh = useCallback(async () => {
     await axios
-      .get("/members/reissue", {
+      .get(process.env.REACT_APP_DB_HOST + "/members/reissue", {
         headers: {
           Authorization: `Bearer ${refreshToken}`,
         },
@@ -39,12 +39,14 @@ const AuthLayout = () => {
   }, [refreshToken]);
 
   useEffect(() => {
-    //새로고침하면 바로 로그인 연장(토큰 갱신)
-    if (performance.getEntriesByType("navigation")[0].type === "reload") {
-      onSilentRefresh();
-    } else if (!isLogin(accessToken)) {
+    // 로그인이 되어 있지 않으면 로그인 페이지로 이동
+    if (!isLogin(accessToken)) {
       alert("로그인이 필요한 페이지입니다");
       navigate("/login", { state: pathname });
+    }
+    //새로 고침하면 바로 로그인 연장(토큰 갱신)
+    else if (performance.getEntriesByType("navigation")[0].type === "reload") {
+      onSilentRefresh();
     }
   }, [onSilentRefresh, accessToken, navigate, pathname]);
 
