@@ -85,11 +85,14 @@ const UpdatePost = () => {
 
   const getPost = async () => {
     try {
-      const response = await axios.get(`/posts/${id}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await axios.get(
+        process.env.REACT_APP_DB_HOST + `/posts/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
       const data = { ...response.data };
       setValue("title", data.title);
       setValue("content", data.content);
@@ -109,7 +112,7 @@ const UpdatePost = () => {
     async (data) => {
       try {
         await axios.patch(
-          `/posts/${id}`,
+          process.env.REACT_APP_DB_HOST + `/posts/${id}`,
           {
             title: data.title,
             content: data.content,
